@@ -119,4 +119,27 @@ class UserServiceTest {
                 .isInstanceOf(InvalidUserException.class)
                 .hasMessage("The phone number of the user is required.");
     }
+
+    @Test
+    void givenAValidUserId_whenGettingUserById_thenGetUserByThatId() {
+        // Given
+        User user = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "01235");
+        User valid = userService.createUser(user);
+        // When
+        User found = userService.getUserBy(user.getId());
+
+        // Then
+        Assertions.assertThat(found).isEqualTo(valid);
+    }
+    @Test
+    void givenAValidUserWithIdNotInRepository_whenGettingUserById_thenInvalidUserException() {
+        // Given
+        User user = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "number");
+
+        // When
+        // Then
+        Assertions.assertThatThrownBy(() -> userService.getUserBy(user.getId()))
+                .isInstanceOf(InvalidUserException.class)
+                .hasMessage("User with id: " + user.getId() + " does not exist");
+    }
 }

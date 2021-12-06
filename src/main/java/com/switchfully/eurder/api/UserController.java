@@ -35,7 +35,7 @@ public class UserController {
         return userDto;
     }
 
-    @GetMapping
+    @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getUsers() {
         logger.info("Method getUsers called");
@@ -44,5 +44,15 @@ public class UserController {
                 .toList();
         logger.info("Method getUsers executed successfully");
         return userDtoList;
+    }
+
+    @GetMapping(path = "/{id}", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto getUser(@PathVariable("id") String id) {
+        logger.info("Method getUser called");
+        User user = userService.getUserBy(id);
+        UserDto userDto = userMapper.mapUserToDto(user);
+        logger.info("Method getUser executed successfully");
+        return userDto;
     }
 }
