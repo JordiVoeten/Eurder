@@ -1,6 +1,6 @@
 package com.switchfully.eurder.service;
 
-import com.switchfully.eurder.domain.User;
+import com.switchfully.eurder.domain.user.User;
 import com.switchfully.eurder.domain.exceptions.InvalidUserException;
 import com.switchfully.eurder.repository.UserRepository;
 import org.springframework.stereotype.Service;

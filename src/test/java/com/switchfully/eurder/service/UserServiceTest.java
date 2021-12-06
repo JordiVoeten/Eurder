@@ -1,10 +1,9 @@
 package com.switchfully.eurder.service;
 
-import com.switchfully.eurder.domain.User;
+import com.switchfully.eurder.domain.user.User;
 import com.switchfully.eurder.domain.exceptions.InvalidUserException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;

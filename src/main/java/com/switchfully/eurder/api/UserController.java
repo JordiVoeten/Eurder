@@ -1,7 +1,7 @@
 package com.switchfully.eurder.api;
 
 import com.switchfully.eurder.api.mapper.UserMapper;
-import com.switchfully.eurder.domain.User;
+import com.switchfully.eurder.domain.user.User;
 import com.switchfully.eurder.domain.user.CreateUserDto;
 import com.switchfully.eurder.domain.user.UserDto;
 import com.switchfully.eurder.service.UserService;
@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/users")

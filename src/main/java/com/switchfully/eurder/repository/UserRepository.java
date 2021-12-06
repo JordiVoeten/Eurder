@@ -1,6 +1,6 @@
 package com.switchfully.eurder.repository;
 
-import com.switchfully.eurder.domain.User;
+import com.switchfully.eurder.domain.user.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
