@@ -4,10 +4,12 @@ import com.switchfully.eurder.domain.User;
 import com.switchfully.eurder.domain.exceptions.InvalidUserException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -15,6 +17,36 @@ import java.util.List;
 class UserServiceTest {
     @Autowired
     private UserService userService;
+
+    @Test
+    void givenAUserListWhichWeFill_whenGettingTheList_thenTheListShouldBeCorrectlyFilled() {
+        // Given
+        User user1 = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "01235");
+        User user2 = new User("Jordi2", "Voeten", "jordi@email.com", "Belgium", "01235");
+        User user3 = new User("Jordi3", "Voeten", "jordi@email.com", "Belgium", "01235");
+        userService.createUser(user1);
+        userService.createUser(user2);
+        userService.createUser(user3);
+        List<User> validUserList = List.of(user1, user2, user3);
+
+        // When
+        List<User> userList = userService.getUsers();
+
+        // Then
+        Assertions.assertThat(userList).isEqualTo(validUserList);
+    }
+
+    @Test
+    void givenAEmptyUserList_whenGettingTheList_thenTheListShouldBeCorrectlyFilled() {
+        // Given
+        List<User> validUserList = new ArrayList<>();
+
+        // When
+        List<User> userList = userService.getUsers();
+
+        // Then
+        Assertions.assertThat(userList).isEqualTo(validUserList);
+    }
 
     @Test
     void givenAValidUser_whenAddingUserToRepository_thenUserIsSuccessfullyAdded() {

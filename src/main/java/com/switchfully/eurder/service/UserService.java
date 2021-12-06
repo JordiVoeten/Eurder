@@ -26,20 +26,16 @@ public class UserService {
     }
 
     private void validateUser(User newUser) {
-        if (newUser.getFirstName() == null || newUser.getFirstName().trim().equals("")) {
-            throw new InvalidUserException("The firstname of the user is required.");
-        }
-        if (newUser.getLastName() == null || newUser.getLastName().trim().equals("")) {
-            throw new InvalidUserException("The lastname of the user is required.");
-        }
-        if (newUser.getEmail() == null || newUser.getEmail().trim().equals("")) {
-            throw new InvalidUserException("The email address of the user is required.");
-        }
-        if (newUser.getAddress() == null || newUser.getAddress().trim().equals("")) {
-            throw new InvalidUserException("The address of the user is required.");
-        }
-        if (newUser.getPhoneNumber() == null || newUser.getPhoneNumber().trim().equals("")) {
-            throw new InvalidUserException("The phone number of the user is required.");
+        assertNullOrEmpty(newUser.getFirstName(), "firstname");
+        assertNullOrEmpty(newUser.getLastName(), "lastname");
+        assertNullOrEmpty(newUser.getEmail(), "email address");
+        assertNullOrEmpty(newUser.getAddress(), "address");
+        assertNullOrEmpty(newUser.getPhoneNumber(), "phone number");
+    }
+
+    private void assertNullOrEmpty(String toCheck, String fieldName) {
+        if (toCheck == null || toCheck.trim().equals("")) {
+            throw new InvalidUserException("The " + fieldName + " of the user is required.");
         }
     }
 

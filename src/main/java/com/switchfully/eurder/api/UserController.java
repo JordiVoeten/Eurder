@@ -32,15 +32,18 @@ public class UserController {
         User newUser = userMapper.mapCreateUserDtoToUser(createUserDto);
         User createdUser = userService.createUser(newUser);
         UserDto userDto = userMapper.mapUserToDto(createdUser);
-        logger.info("Method createUser Executed successfully");
+        logger.info("Method createUser executed successfully");
         return userDto;
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDto> getUsers(){
-        return userService.getUsers().stream()
+    public List<UserDto> getUsers() {
+        logger.info("Method getUsers called");
+        List<UserDto> userDtoList = userService.getUsers().stream()
                 .map(userMapper::mapUserToDto)
                 .toList();
+        logger.info("Method getUsers executed successfully");
+        return userDtoList;
     }
 }
