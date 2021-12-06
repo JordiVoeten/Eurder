@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.List;
+
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -77,6 +79,7 @@ class ItemServiceTest {
                 .isInstanceOf(InvalidItemException.class)
                 .hasMessage("The price of the item has to be larger than 0.");
     }
+
     @Test
     void givenAnItemWithANegativeAmount_whenAddingThatItemToRepository_thenThrowsInvalidItemException() {
         // Given
@@ -87,5 +90,38 @@ class ItemServiceTest {
         Assertions.assertThatThrownBy(() -> itemService.createItem(item))
                 .isInstanceOf(InvalidItemException.class)
                 .hasMessage("The amount of the item has to be larger than 0.");
+    }
+
+    @Test
+    void givenThreeItemsAddedToList_whenGetAllItems_thenListShouldMatch() {
+        // Given
+        Item item = new Item("Phone", "Used to call and text others", new Price(400, Currency.EUR), 5);
+        Item item2 = new Item("Bike", "Used to drive around", new Price(200, Currency.EUR), 2);
+        Item item3 = new Item("Pen", "Used to write something down", new Price(2, Currency.EUR), 10);
+        itemService.createItem(item);
+        itemService.createItem(item2);
+        itemService.createItem(item3);
+        List<Item> validItemList = List.of(item, item2, item3);
+        // When
+        List<Item> itemList = itemService.getItems();
+
+        // Then
+        Assertions.assertThat(itemList).isEqualTo(validItemList);
+    }
+
+    @Test
+    void givenThreeItemsAddedToList_whenGetItemById_thenGetThatItem() {
+        // Given
+        Item item = new Item("Phone", "Used to call and text others", new Price(400, Currency.EUR), 5);
+        Item item2 = new Item("Bike", "Used to drive around", new Price(200, Currency.EUR), 2);
+        Item item3 = new Item("Pen", "Used to write something down", new Price(2, Currency.EUR), 10);
+        itemService.createItem(item);
+        itemService.createItem(item2);
+        itemService.createItem(item3);
+        // When
+        Item  found = itemService.getItemBy(item.getId());
+
+        // Then
+        Assertions.assertThat(found).isEqualTo(item);
     }
 }

@@ -54,6 +54,27 @@ class OrderServiceTest {
     }
 
     @Test
+    void givenAValidOrderThatIsAdded_whenGettingOrders_thenGetList() {
+        // Given
+        Item item = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
+        itemService.createItem(item);
+        User user = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "01235");
+        user = userService.createUser(user);
+        ItemGroup oneGroup = new ItemGroup(item, 3);
+        List<ItemGroup> itemGroups = new ArrayList<>();
+        itemGroups.add(oneGroup);
+        Order order = new Order(itemGroups, user.getId());
+        Order saved = orderService.createItem(order);
+        List<Order> validOrderList = List.of(order);
+        // When
+        List<Order> orderList = orderService.getOrders();
+
+        // Then
+        Assertions.assertThat(orderList).isEqualTo(validOrderList);
+    }
+
+
+    @Test
     void givenAValidOrderWithTooLittleStock_whenOrderingItems_thenOrderIsCreated() {
         // Given
         Item item = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 2);
