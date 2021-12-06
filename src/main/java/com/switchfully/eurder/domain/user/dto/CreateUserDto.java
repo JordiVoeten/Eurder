@@ -1,4 +1,4 @@
-package com.switchfully.eurder.domain.user;
+package com.switchfully.eurder.domain.user.dto;
 
 public class CreateUserDto {
     private String firstName;

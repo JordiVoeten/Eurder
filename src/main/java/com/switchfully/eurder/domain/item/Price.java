@@ -12,6 +12,11 @@ public class Price {
         this.currency = currency;
     }
 
+    public static Price calculatePrice(Price price, int amount) {
+        BigDecimal count = new BigDecimal(amount);
+        return new Price(count.multiply(price.getValue()).doubleValue(), price.getCurrency());
+    }
+
     public void setValue(BigDecimal value) {
         this.value = value;
     }

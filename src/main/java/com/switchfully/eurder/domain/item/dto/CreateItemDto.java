@@ -1,4 +1,6 @@
-package com.switchfully.eurder.domain.item;
+package com.switchfully.eurder.domain.item.dto;
+
+import com.switchfully.eurder.domain.item.Price;
 
 public class CreateItemDto {
     private String name;

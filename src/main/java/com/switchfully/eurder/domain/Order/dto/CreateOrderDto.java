@@ -1,4 +1,4 @@
-package com.switchfully.eurder.domain.Order;
+package com.switchfully.eurder.domain.Order.dto;
 
 public class CreateOrderDto {
     private ItemGroupDto[] itemGroups;

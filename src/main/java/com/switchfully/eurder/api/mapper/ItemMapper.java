@@ -1,10 +1,10 @@
 package com.switchfully.eurder.api.mapper;
 
 import com.switchfully.eurder.domain.Order.ItemGroup;
-import com.switchfully.eurder.domain.Order.ItemGroupDto;
-import com.switchfully.eurder.domain.item.CreateItemDto;
+import com.switchfully.eurder.domain.Order.dto.ItemGroupDto;
+import com.switchfully.eurder.domain.item.dto.CreateItemDto;
 import com.switchfully.eurder.domain.item.Item;
-import com.switchfully.eurder.domain.item.ItemDto;
+import com.switchfully.eurder.domain.item.dto.ItemDto;
 import com.switchfully.eurder.service.ItemService;
 import org.springframework.stereotype.Component;
 

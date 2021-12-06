@@ -2,8 +2,8 @@ package com.switchfully.eurder.api;
 
 import com.switchfully.eurder.api.mapper.UserMapper;
 import com.switchfully.eurder.domain.user.User;
-import com.switchfully.eurder.domain.user.CreateUserDto;
-import com.switchfully.eurder.domain.user.UserDto;
+import com.switchfully.eurder.domain.user.dto.CreateUserDto;
+import com.switchfully.eurder.domain.user.dto.UserDto;
 import com.switchfully.eurder.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

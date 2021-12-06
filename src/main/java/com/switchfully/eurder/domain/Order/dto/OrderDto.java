@@ -1,4 +1,4 @@
-package com.switchfully.eurder.domain.Order;
+package com.switchfully.eurder.domain.Order.dto;
 
 import com.switchfully.eurder.domain.item.Price;
 
@@ -6,7 +6,7 @@ import java.util.List;
 
 public class OrderDto {
     private String id;
-    private List<ItemGroup> itemGroups;
+    private List<ItemGroupReportDto> itemGroups;
     private String customerId;
     private Price totalPrice;
 
@@ -19,11 +19,11 @@ public class OrderDto {
         return this;
     }
 
-    public List<ItemGroup> getItemGroups() {
+    public List<ItemGroupReportDto> getItemGroups() {
         return itemGroups;
     }
 
-    public OrderDto setItemGroups(List<ItemGroup> itemGroups) {
+    public OrderDto setItemGroups(List<ItemGroupReportDto> itemGroups) {
         this.itemGroups = itemGroups;
         return this;
     }

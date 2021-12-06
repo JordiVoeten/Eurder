@@ -1,9 +1,10 @@
 package com.switchfully.eurder.api;
 
 import com.switchfully.eurder.api.mapper.OrderMapper;
-import com.switchfully.eurder.domain.Order.CreateOrderDto;
+import com.switchfully.eurder.domain.Order.dto.CreateOrderDto;
 import com.switchfully.eurder.domain.Order.Order;
-import com.switchfully.eurder.domain.Order.OrderDto;
+import com.switchfully.eurder.domain.Order.dto.OrderDto;
+import com.switchfully.eurder.domain.Order.dto.OrderListDto;
 import com.switchfully.eurder.domain.item.Price;
 import com.switchfully.eurder.service.OrderService;
 import org.slf4j.Logger;
@@ -29,7 +30,6 @@ public class OrderController {
     @ResponseStatus(HttpStatus.CREATED)
     public Price createOrder(@RequestBody CreateOrderDto createOrderDto) {
         logger.info("Method createOrder called");
-
         Order newOrder = orderMapper.mapCreateOrderDtoToOrder(createOrderDto);
         Order savedOrder = orderService.createItem(newOrder);
         OrderDto orderDto = orderMapper.mapOrderToDto(savedOrder);
@@ -39,12 +39,13 @@ public class OrderController {
 
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderDto> getOrders(){
-        logger.info("Method getOrders called");
-         List<Order> orderList = orderService.getOrders();
-         List<OrderDto> orderDtoList = orderList.stream().map(orderMapper::mapOrderToDto).toList();
-         logger.info("Method getOrders executed successfully");
-         return orderDtoList;
+    public OrderListDto getOrderReport() {
+        logger.info("Method getOrderReport called");
+        List<Order> orderList = orderService.getOrders();
+        List<OrderDto> orderDtoList = orderService.getOrders().stream().map(orderMapper::mapOrderToDto).toList();
+        OrderListDto orderListDto = orderMapper.mapOrderDtoListToOrderListDto(orderDtoList);
+        logger.info("Method getOrderReport executed successfully");
+        return orderListDto;
     }
 
 }

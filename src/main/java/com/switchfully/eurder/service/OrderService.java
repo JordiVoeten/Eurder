@@ -46,7 +46,7 @@ public class OrderService {
         BigDecimal price = new BigDecimal(0);
         Currency currency = null;
         for (ItemGroup itemGroup : order.getItemGroups()) {
-            Item item = itemService.getItemBy(itemGroup.getItemId());
+            Item item = itemService.getItemBy(itemGroup.getItem().getId());
             BigDecimal amount = new BigDecimal(itemGroup.getAmount());
             price = price.add(item.getPrice().getValue().multiply(amount));
             if (currency == null) currency = item.getPrice().getCurrency();

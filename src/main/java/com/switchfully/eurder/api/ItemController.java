@@ -1,9 +1,9 @@
 package com.switchfully.eurder.api;
 
 import com.switchfully.eurder.api.mapper.ItemMapper;
-import com.switchfully.eurder.domain.item.CreateItemDto;
+import com.switchfully.eurder.domain.item.dto.CreateItemDto;
 import com.switchfully.eurder.domain.item.Item;
-import com.switchfully.eurder.domain.item.ItemDto;
+import com.switchfully.eurder.domain.item.dto.ItemDto;
 import com.switchfully.eurder.service.ItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
