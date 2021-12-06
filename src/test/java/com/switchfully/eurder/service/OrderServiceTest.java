@@ -48,7 +48,9 @@ class OrderServiceTest {
         Order saved = orderService.createItem(order);
 
         // Then
+
         Assertions.assertThat(order).isEqualTo(saved);
+        Assertions.assertThat(order.getId()).isEqualTo(saved.getId());
         Assertions.assertThat(order.getItemGroups()).isEqualTo(itemGroups);
         Assertions.assertThat(order.getTotalPrice().getValue()).isEqualTo(validTotalValue);
     }
@@ -85,7 +87,7 @@ class OrderServiceTest {
         List<ItemGroup> itemGroups = new ArrayList<>();
         itemGroups.add(oneGroup);
         Order order = new Order(itemGroups, user.getId());
-        BigDecimal validTotalValue = new BigDecimal(3 * 22).setScale(2, RoundingMode.HALF_EVEN);
+        Price validTotalValue = oneGroup.getGroupPrice();
 
         // When
         Order saved = orderService.createItem(order);
@@ -93,7 +95,9 @@ class OrderServiceTest {
         // Then
         Assertions.assertThat(order).isEqualTo(saved);
         Assertions.assertThat(order.getItemGroups()).isEqualTo(itemGroups);
-        Assertions.assertThat(order.getTotalPrice().getValue()).isEqualTo(validTotalValue);
+        Assertions.assertThat(order.getItemGroups().stream().map(ItemGroup::getShippingDate).toList())
+                .containsAll(itemGroups.stream().map(ItemGroup::getShippingDate).toList());
+        Assertions.assertThat(order.getTotalPrice().getValue()).isEqualTo(validTotalValue.getValue());
     }
 
     @Test

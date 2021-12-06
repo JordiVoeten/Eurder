@@ -56,7 +56,7 @@ public class OrderMapper {
         for (OrderDto orderDto : orderDtos) {
             orderListDto.addToOrderList(orderDto);
             Price current = orderListDto.getTotalListPrice();
-            current.setValue(current.getValue().add(orderDto.getTotalPrice().getValue()));
+            current.setValue(current.getValue().add(orderDto.getTotalPrice().getValue()).doubleValue());
             orderListDto.setTotalListPrice(current);
         }
         return orderListDto;

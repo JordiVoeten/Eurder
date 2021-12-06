@@ -17,12 +17,8 @@ public class Price {
         return new Price(count.multiply(price.getValue()).doubleValue(), price.getCurrency());
     }
 
-    public void setValue(BigDecimal value) {
-        this.value = value;
-    }
-
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
+    public void setValue(double value) {
+        this.value = new BigDecimal(value);
     }
 
     public BigDecimal getValue() {

@@ -31,6 +31,18 @@ class ItemServiceTest {
         // Then
         Assertions.assertThat(item).isEqualTo(created);
     }
+    @Test
+    void givenAValidItem_whenSettingPriceAndAddingThatItemToRepository_thenItemIsAdded() {
+        // Given
+        Item item = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
+
+        // When
+        item.getPrice().setValue(12);
+        Item created = itemService.createItem(item);
+
+        // Then
+        Assertions.assertThat(item).isEqualTo(created);
+    }
 
     @Test
     void givenAnItemWithInvalidName_whenAddingThatItemToRepository_thenThrowsInvalidItemException() {
