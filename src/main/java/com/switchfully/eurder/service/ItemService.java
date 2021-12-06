@@ -19,12 +19,18 @@ public class ItemService {
 
     public Item createItem(Item newItem) {
         validateItem(newItem);
-        Item item = itemRepository.addItem(newItem);
-        return item;
+        return itemRepository.addItem(newItem);
     }
 
     public List<Item> getItems() {
         return itemRepository.getItemList();
+    }
+
+    public Item getItemBy(String id) {
+        return itemRepository.getItemList().stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new InvalidItemException("Item with id: " + id + " does not exist."));
     }
 
     private void validateItem(Item newItem) {

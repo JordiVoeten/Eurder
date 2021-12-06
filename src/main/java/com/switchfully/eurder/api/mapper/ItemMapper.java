@@ -1,12 +1,23 @@
 package com.switchfully.eurder.api.mapper;
 
+import com.switchfully.eurder.domain.Order.ItemGroup;
+import com.switchfully.eurder.domain.Order.ItemGroupDto;
 import com.switchfully.eurder.domain.item.CreateItemDto;
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.ItemDto;
+import com.switchfully.eurder.service.ItemService;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class ItemMapper {
+    private ItemService itemService;
+
+    public ItemMapper(ItemService itemService) {
+        this.itemService = itemService;
+    }
+
     public Item mapCreateItemDtoToItem(CreateItemDto createItemDto) {
         return new Item(createItemDto.getName(), createItemDto.getDescription(), createItemDto.getPrice(), createItemDto.getAmount());
     }
@@ -18,5 +29,14 @@ public class ItemMapper {
                 .setDescription(item.getDescription())
                 .setPrice(item.getPrice())
                 .setAmount(item.getAmount());
+    }
+
+    public List<ItemGroup> mapItemGroupListDtoToItemGroupList(List<ItemGroupDto> itemGroups) {
+        return itemGroups.stream().map(this::mapItemGroupDtoToItemGroup).toList();
+    }
+
+    public ItemGroup mapItemGroupDtoToItemGroup(ItemGroupDto itemGroupDto) {
+        Item item = itemService.getItemBy(itemGroupDto.getItemId());
+        return new ItemGroup(item, itemGroupDto.getAmount());
     }
 }

@@ -17,12 +17,18 @@ public class UserService {
 
     public User createUser(User newUser) {
         validateUser(newUser);
-        User user = userRepository.addUser(newUser);
-        return user;
+        return userRepository.addUser(newUser);
     }
 
     public List<User> getUsers() {
         return userRepository.getUserList();
+    }
+
+    public User getUserBy(String userId){
+        return userRepository.getUserList().stream()
+                .filter(user -> user.getId().equals(userId))
+                .findFirst()
+                .orElseThrow(() -> new InvalidUserException("User with id: " + userId + " does not exist"));
     }
 
     private void validateUser(User newUser) {
