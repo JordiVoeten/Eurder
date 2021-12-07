@@ -78,4 +78,8 @@ public class ItemService {
     }
 
 
+    public void removeAmount(Item item, int amount) {
+        item.setAmount(item.getAmount() - amount);
+        updateItem(item);
+    }
 }

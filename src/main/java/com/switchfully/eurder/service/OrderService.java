@@ -55,6 +55,7 @@ public class OrderService {
             BigDecimal amount = new BigDecimal(itemGroup.getAmount());
             price = price.add(item.getPrice().getValue().multiply(amount));
             if (currency == null) currency = item.getPrice().getCurrency();
+            itemService.removeAmount(item, itemGroup.getAmount());
         }
         return new Price(price.doubleValue(), currency);
     }
