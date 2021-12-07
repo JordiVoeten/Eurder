@@ -33,11 +33,18 @@ public class ItemService {
                 .orElseThrow(() -> new InvalidItemException("Item with id: " + id + " does not exist."));
     }
 
-    private void validateItem(Item newItem) {
-        assertNullOrEmpty(newItem.getName(), "name");
-        assertNullOrEmpty(newItem.getDescription(), "description");
-        assertValidPrice(newItem.getPrice());
-        assertPositiveAmount(newItem.getAmount());
+    private void validateItem(Item item) {
+        assertItemNameNotInUse(item.getName());
+        assertNullOrEmpty(item.getName(), "name");
+        assertNullOrEmpty(item.getDescription(), "description");
+        assertValidPrice(item.getPrice());
+        assertPositiveAmount(item.getAmount());
+    }
+
+    private void assertItemNameNotInUse(String name) {
+        if (itemRepository.getItemList().stream().anyMatch(item -> item.getName().equals(name))) {
+            throw new InvalidItemException("The item with name: " + name + " already exists.");
+        }
     }
 
     private void assertPositiveAmount(int amount) {
