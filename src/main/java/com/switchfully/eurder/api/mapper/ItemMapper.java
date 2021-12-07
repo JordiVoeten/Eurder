@@ -2,6 +2,7 @@ package com.switchfully.eurder.api.mapper;
 
 import com.switchfully.eurder.domain.Order.ItemGroup;
 import com.switchfully.eurder.domain.Order.dto.ItemGroupDto;
+import com.switchfully.eurder.domain.item.StockLevel;
 import com.switchfully.eurder.domain.item.dto.CreateItemDto;
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.dto.ItemDto;
@@ -25,6 +26,7 @@ public class ItemMapper {
     public ItemDto mapItemToDto(Item item) {
         return new ItemDto()
                 .setId(item.getId())
+                .setStockLevel(StockLevel.getStockLevelForAmount(item.getAmount()))
                 .setName(item.getName())
                 .setDescription(item.getDescription())
                 .setPrice(item.getPrice())

@@ -1,6 +1,7 @@
 package com.switchfully.eurder.api;
 
 import com.switchfully.eurder.api.mapper.ItemMapper;
+import com.switchfully.eurder.domain.item.StockLevel;
 import com.switchfully.eurder.domain.item.dto.CreateItemDto;
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.dto.ItemDto;
@@ -42,13 +43,18 @@ public class ItemController {
 
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> getItems() {
-        logger.info("Method getItems called");
-        List<Item> savedItem = itemService.getItems();
+    public List<ItemDto> getItemOverview(@RequestParam(required = false) StockLevel stockLevel) {
+        logger.info("Method getItemOverview called");
+        List<Item> savedItem = itemService.getItemsByUrgency();
         List<ItemDto> itemDtoList = savedItem.stream()
                 .map(itemMapper::mapItemToDto)
                 .toList();
-        logger.info("Method getItems executed successfully");
+        if (stockLevel != null) {
+            itemDtoList = itemDtoList.stream()
+                    .filter(itemDto -> itemDto.getStockLevel().equals(stockLevel))
+                    .toList();
+        }
+        logger.info("Method getItemOverview executed successfully");
         return itemDtoList;
     }
 }

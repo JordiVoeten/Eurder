@@ -31,6 +31,7 @@ class ItemServiceTest {
         // Then
         Assertions.assertThat(item).isEqualTo(created);
     }
+
     @Test
     void givenAValidItem_whenSettingPriceAndAddingThatItemToRepository_thenItemIsAdded() {
         // Given
@@ -42,6 +43,23 @@ class ItemServiceTest {
 
         // Then
         Assertions.assertThat(item).isEqualTo(created);
+    }
+
+    @Test
+    void givenAValidItemList_whenGetItemsByUrgency_thenItemListIsSorted() {
+        // Given
+        Item item = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
+        Item item2 = new Item("Bike", "Used to call and text others", new Price(22, Currency.EUR), 1);
+        Item item3 = new Item("Car", "Used to call and text others", new Price(22, Currency.EUR), 10);
+        List<Item> validSortedList = List.of(item2, item, item3);
+        itemService.createItem(item);
+        itemService.createItem(item2);
+        itemService.createItem(item3);
+
+        // When
+        List<Item> urgencyList = itemService.getItemsByUrgency();
+        // Then
+        Assertions.assertThat(urgencyList).isEqualTo(validSortedList);
     }
 
     @Test
@@ -145,7 +163,7 @@ class ItemServiceTest {
         itemService.createItem(item2);
         itemService.createItem(item3);
         // When
-        Item  found = itemService.getItemBy(item.getId());
+        Item found = itemService.getItemBy(item.getId());
 
         // Then
         Assertions.assertThat(found).isEqualTo(item);

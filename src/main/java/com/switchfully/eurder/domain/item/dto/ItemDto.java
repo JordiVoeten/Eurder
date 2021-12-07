@@ -1,13 +1,24 @@
 package com.switchfully.eurder.domain.item.dto;
 
 import com.switchfully.eurder.domain.item.Price;
+import com.switchfully.eurder.domain.item.StockLevel;
 
 public class ItemDto {
     private String id;
+    private StockLevel stockLevel;
     private String name;
     private String description;
     private Price price;
     private int amount;
+
+    public StockLevel getStockLevel() {
+        return stockLevel;
+    }
+
+    public ItemDto setStockLevel(StockLevel stockLevel) {
+        this.stockLevel = stockLevel;
+        return this;
+    }
 
     public String getId() {
         return id;

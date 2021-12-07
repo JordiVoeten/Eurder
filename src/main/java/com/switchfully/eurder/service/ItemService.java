@@ -7,6 +7,7 @@ import com.switchfully.eurder.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -24,6 +25,10 @@ public class ItemService {
 
     public List<Item> getItems() {
         return itemRepository.getItemList();
+    }
+
+    public List<Item> getItemsByUrgency() {
+        return itemRepository.getItemList().stream().sorted(Comparator.comparingInt(Item::getAmount)).toList();
     }
 
     public Item getItemBy(String id) {
