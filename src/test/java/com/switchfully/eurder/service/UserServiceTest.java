@@ -78,7 +78,7 @@ class UserServiceTest {
 
         // When
         User found = userService.getUsers().stream()
-                .filter(user -> user.getEmail().contains("admin@mail.com"))
+                .filter(user -> user.getEmail().contains("admin@hotmail.com"))
                 .findAny().get();
 
         // Then

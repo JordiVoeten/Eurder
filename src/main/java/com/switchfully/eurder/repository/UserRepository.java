@@ -13,7 +13,7 @@ public class UserRepository {
 
     public UserRepository() {
         this.userList = new ArrayList<>();
-        userList.add(new User("admin", "adminLN", "admin@mail.com", "UNKNOWN", "UNKOWN").setUserType(UserType.ADMIN));
+        userList.add(new User("admin", "adminLN", "admin@hotmail.com", "UNKNOWN", "UNKOWN").setUserType(UserType.ADMIN));
     }
 
     public List<User> getUserList() {
