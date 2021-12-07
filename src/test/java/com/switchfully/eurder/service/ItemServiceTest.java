@@ -57,6 +57,20 @@ class ItemServiceTest {
     }
 
     @Test
+    void givenAnItemWithAnExistingName_whenAddingThatItemToRepository_thenThrowsInvalidItemException() {
+        // Given
+        Item item = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
+        Item item2 = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
+        itemService.createItem(item);
+
+        // When
+        // Then
+        Assertions.assertThatThrownBy(() -> itemService.createItem(item2))
+                .isInstanceOf(InvalidItemException.class)
+                .hasMessage("The item with name: Phone already exists.");
+    }
+
+    @Test
     void givenAnItemWithInvalidDescription_whenAddingThatItemToRepository_thenThrowsInvalidItemException() {
         // Given
         Item item = new Item("Phone", null, new Price(22, Currency.EUR), 5);
