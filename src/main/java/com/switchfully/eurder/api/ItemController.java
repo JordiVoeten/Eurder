@@ -58,8 +58,9 @@ public class ItemController {
 
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> getItemOverview(@RequestParam(required = false) StockLevel stockLevel) {
+    public List<ItemDto> getItemOverview(@RequestParam(required = false) StockLevel stockLevel, @RequestHeader(required = false) String authorization) {
         logger.info("Method getItemOverview called");
+        userValidator.assertUserTypeForFeature(Feature.ITEM_OVERVIEW, authorization);
         List<Item> savedItem = itemService.getItemsByUrgency();
         List<ItemDto> itemDtoList = savedItem.stream()
                 .map(itemMapper::mapItemToDto)

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.PathParam;
 import java.util.List;
 
 @RestController
@@ -42,6 +43,18 @@ public class OrderController {
         Order savedOrder = orderService.createItem(newOrder);
         OrderDto orderDto = orderMapper.mapOrderToDto(savedOrder);
         logger.info("Method createOrder executed successfully");
+        return orderDto.getTotalPrice();
+    }
+
+    @PostMapping(path = "/{orderId}", produces = "application/json", consumes = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Price reorderOrder(@PathVariable("orderId") String orderId, @RequestHeader(required = false) String authorization) {
+        logger.info("Method reorderOrder called");
+        userValidator.assertUserTypeForFeature(Feature.REORDER_EXISTING_ORDER, authorization);
+        String userId = userValidator.getUserFromAuthorization(authorization).getId();
+        Order reordered = orderService.reorderOrder(orderId, userId);
+        OrderDto orderDto = orderMapper.mapOrderToDto(reordered);
+        logger.info("Method reorderOrder executed successfully");
         return orderDto.getTotalPrice();
     }
 

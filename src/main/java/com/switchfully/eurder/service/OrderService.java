@@ -33,8 +33,7 @@ public class OrderService {
     public Order createItem(Order order) {
         assertValidItemGroups(order.getItemGroups());
         userService.getUserBy(order.getCustomerId());
-        Price totalOrderPrice = calculateTotalOrderPrice(order);
-        order.setTotalPrice(totalOrderPrice);
+        order.setTotalPrice(calculateTotalOrderPrice(order));
         return orderRepository.addOrder(order);
     }
 
@@ -80,5 +79,21 @@ public class OrderService {
             }
         }
         return itemGroupDtoList;
+    }
+
+    public Order reorderOrder(String orderId, String userId) {
+        Order foundOrder = getOrdersByUser(userId).stream()
+                .filter(order -> order.getId().equals(orderId))
+                .findFirst()
+                .orElseThrow(() -> new InvalidOrderException("The order does not exist or the user is not the same."));
+
+        List<ItemGroup> itemGroups = new ArrayList<>();
+        for (ItemGroup itemGroup : foundOrder.getItemGroups()) {
+            Item item = itemService.getItemBy(itemGroup.getItem().getId());
+            int amount = itemGroup.getAmount();
+            itemGroups.add(new ItemGroup(item, amount));
+        }
+        Order newOrder = new Order(itemGroups, userId);
+        return createItem(newOrder);
     }
 }

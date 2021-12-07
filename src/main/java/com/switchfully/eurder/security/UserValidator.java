@@ -22,6 +22,7 @@ public class UserValidator {
         // Features for the item controller
         map.put(Feature.ADD_ITEM, UserType.ADMIN);
         map.put(Feature.UPDATE_ITEM, UserType.ADMIN);
+        map.put(Feature.ITEM_OVERVIEW, UserType.ADMIN);
 
         // Features for the user controller
         map.put(Feature.VIEW_ALL_CUSTOMERS, UserType.ADMIN);
@@ -29,6 +30,7 @@ public class UserValidator {
 
         // Features for the order controller
         map.put(Feature.ORDER_ITEMS, UserType.CUSTOMER);
+        map.put(Feature.REORDER_EXISTING_ORDER, UserType.CUSTOMER);
         map.put(Feature.VIEW_ORDER_REPORT, UserType.CUSTOMER);
         map.put(Feature.ITEMS_SHIPPING_TODAY, UserType.ADMIN);
 
