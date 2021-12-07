@@ -4,6 +4,7 @@ import com.switchfully.eurder.domain.user.User;
 import com.switchfully.eurder.domain.exceptions.InvalidUserException;
 import com.switchfully.eurder.domain.user.UserType;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,40 +19,40 @@ class UserServiceTest {
     @Autowired
     private UserService userService;
 
+    User user1;
+    User user2;
+    User user3;
+
+    @BeforeEach
+    void setup() {
+        user1 = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "01235");
+        user2 = new User("Jordi2", "Voeten", "jordi2@email.com", "Belgium", "01235");
+        user3 = new User("Jordi3", "Voeten", "jordi3@email.com", "Belgium", "01235");
+        userService.createUser(user2);
+        userService.createUser(user3);
+    }
+
     @Test
     void givenAUserListWhichWeFill_whenGettingTheList_thenTheListShouldBeCorrectlyFilled() {
         // Given
-        User user1 = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "01235");
-        User user2 = new User("Jordi2", "Voeten", "jordi2@email.com", "Belgium", "01235");
-        User user3 = new User("Jordi3", "Voeten", "jordi3@email.com", "Belgium", "01235");
         List<User> validUserList = new ArrayList<>(userService.getUsers());
         validUserList.add(user1);
         validUserList.add(user2);
         validUserList.add(user3);
         userService.createUser(user1);
-        userService.createUser(user2);
-        userService.createUser(user3);
-
         // When
         List<User> userList = userService.getUsers();
 
         // Then
-        Assertions.assertThat(userList).isEqualTo(validUserList);
+        Assertions.assertThat(userList).containsAll(validUserList);
     }
 
     @Test
     void givenAUsers_whenTryingToCreateUserWithSameEmail_thenInvalidUserException() {
         // Given
-        User user1 = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "01235");
-        User user2 = new User("Jordi2", "Voeten", "jordi2@email.com", "Belgium", "01235");
-        User user3 = new User("Jordi3", "Voeten", "jordi@email.com", "Belgium", "01235");
-
         userService.createUser(user1);
-        userService.createUser(user2);
-
-
         // Then
-        Assertions.assertThatThrownBy(() -> userService.createUser(user3))
+        Assertions.assertThatThrownBy(() -> userService.createUser(user1))
                 .isInstanceOf(InvalidUserException.class)
                 .hasMessage("The email address is already in use.");
     }
@@ -62,11 +63,27 @@ class UserServiceTest {
         User user = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "01235");
 
         // When
-        userService.createUser(user);
-        List<User> userList = userService.getUsers();
+        User created = userService.createUser(user);
+        User found = userService.getUserBy(user.getId());
 
         // Then
-        Assertions.assertThat(userList).contains(user);
+        Assertions.assertThat(created).isEqualTo(found);
+        Assertions.assertThat(created.getUserType()).isEqualTo(UserType.CUSTOMER);
+        Assertions.assertThat(created.getUserType().getUserValue()).isEqualTo(UserType.CUSTOMER.getUserValue());
+    }
+
+    @Test
+    void givenAnAdmin_whenGettingThatAdmin_thenCheckUserType() {
+        // Given
+
+        // When
+        User found = userService.getUsers().stream()
+                .filter(user -> user.getEmail().contains("admin@mail.com"))
+                .findAny().get();
+
+        // Then
+        Assertions.assertThat(found.getUserType()).isEqualTo(UserType.ADMIN);
+        Assertions.assertThat(found.getUserType().getUserValue()).isEqualTo(UserType.ADMIN.getUserValue());
     }
 
     @Test
