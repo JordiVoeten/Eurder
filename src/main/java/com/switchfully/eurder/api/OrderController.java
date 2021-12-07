@@ -1,8 +1,10 @@
 package com.switchfully.eurder.api;
 
 import com.switchfully.eurder.api.mapper.OrderMapper;
+import com.switchfully.eurder.domain.Order.ItemGroup;
 import com.switchfully.eurder.domain.Order.dto.CreateOrderDto;
 import com.switchfully.eurder.domain.Order.Order;
+import com.switchfully.eurder.domain.Order.dto.ItemGroupDto;
 import com.switchfully.eurder.domain.Order.dto.OrderDto;
 import com.switchfully.eurder.domain.Order.dto.OrderListDto;
 import com.switchfully.eurder.domain.item.Price;
@@ -55,6 +57,16 @@ public class OrderController {
         OrderListDto orderListDto = orderMapper.mapOrderDtoListToOrderListDto(orderDtoList);
         logger.info("Method getOrderReport executed successfully");
         return orderListDto;
+    }
+
+    @GetMapping(path = "/shippedToday", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ItemGroupDto> getItemsThatAreShippedToday(@RequestHeader(required = false) String authorization) {
+        logger.info("Method getItemsThatAreShippedToday called");
+        userValidator.assertUserTypeForFeature(Feature.ITEMS_SHIPPING_TODAY, authorization);
+        List<ItemGroupDto> itemGroupDtoList = orderService.getGroupsShippedToday();
+        logger.info("Method getItemsThatAreShippedToday executed successfully");
+        return itemGroupDtoList;
     }
 
 }

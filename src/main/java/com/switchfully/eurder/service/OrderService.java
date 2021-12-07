@@ -1,7 +1,9 @@
 package com.switchfully.eurder.service;
 
+import com.switchfully.eurder.api.mapper.ItemMapper;
 import com.switchfully.eurder.domain.Order.ItemGroup;
 import com.switchfully.eurder.domain.Order.Order;
+import com.switchfully.eurder.domain.Order.dto.ItemGroupDto;
 import com.switchfully.eurder.domain.exceptions.InvalidOrderException;
 import com.switchfully.eurder.domain.item.Currency;
 import com.switchfully.eurder.domain.item.Item;
@@ -10,6 +12,8 @@ import com.switchfully.eurder.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,11 +21,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemService itemService;
     private final UserService userService;
+    private final ItemMapper itemMapper;
 
-    public OrderService(OrderRepository orderRepository, ItemService itemService, UserService userService) {
+    public OrderService(OrderRepository orderRepository, ItemService itemService, UserService userService, ItemMapper itemMapper) {
         this.orderRepository = orderRepository;
         this.itemService = itemService;
         this.userService = userService;
+        this.itemMapper = itemMapper;
     }
 
     public Order createItem(Order order) {
@@ -60,5 +66,19 @@ public class OrderService {
 
     public List<Order> getOrdersByUser(String customerId) {
         return orderRepository.getOrderList().stream().filter(order -> order.getCustomerId().equals(customerId)).toList();
+    }
+
+    public List<ItemGroupDto> getGroupsShippedToday() {
+        List<ItemGroupDto> itemGroupDtoList = new ArrayList<>();
+        for (Order order : orderRepository.getOrderList()) {
+            for (ItemGroup itemGroup : order.getItemGroups()) {
+                if (itemGroup.getShippingDate().isEqual(LocalDate.now())) {
+                    ItemGroupDto itemGroupDto = itemMapper.mapItemGroupToItemGroupDto(itemGroup);
+                    itemGroupDto.setAddress(userService.getUserBy(order.getCustomerId()).getAddress());
+                    itemGroupDtoList.add(itemGroupDto);
+                }
+            }
+        }
+        return itemGroupDtoList;
     }
 }

@@ -30,6 +30,7 @@ public class UserValidator {
         // Features for the order controller
         map.put(Feature.ORDER_ITEMS, UserType.CUSTOMER);
         map.put(Feature.VIEW_ORDER_REPORT, UserType.CUSTOMER);
+        map.put(Feature.ITEMS_SHIPPING_TODAY, UserType.ADMIN);
 
         return map;
     }

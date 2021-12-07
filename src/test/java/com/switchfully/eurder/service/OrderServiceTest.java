@@ -1,7 +1,9 @@
 package com.switchfully.eurder.service;
 
+import com.switchfully.eurder.api.mapper.ItemMapper;
 import com.switchfully.eurder.domain.Order.ItemGroup;
 import com.switchfully.eurder.domain.Order.Order;
+import com.switchfully.eurder.domain.Order.dto.ItemGroupDto;
 import com.switchfully.eurder.domain.exceptions.InvalidOrderException;
 import com.switchfully.eurder.domain.exceptions.InvalidUserException;
 import com.switchfully.eurder.domain.item.Currency;
@@ -16,6 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +32,8 @@ class OrderServiceTest {
     private UserService userService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private ItemMapper itemMapper;
 
 
     @Test
@@ -74,6 +79,7 @@ class OrderServiceTest {
         // Then
         Assertions.assertThat(orderList).isEqualTo(validOrderList);
     }
+
     @Test
     void givenAValidOrderThatIsAdded_whenGettingOrdersByUser_thenGetList() {
         // Given
@@ -172,5 +178,28 @@ class OrderServiceTest {
         Assertions.assertThatThrownBy(() -> orderService.createItem(order))
                 .isInstanceOf(InvalidUserException.class)
                 .hasMessage("User with id: " + user.getId() + " does not exist");
+    }
+
+    @Test
+    void givenAValidOrderThatIsAddedSetShippingDate_whenGettingOrdersShippedToday_thenGetList() {
+        // Given
+        Item item = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
+        itemService.createItem(item);
+        User user = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "01235");
+        user = userService.createUser(user);
+        ItemGroup oneGroup = new ItemGroup(item, 3);
+        oneGroup.setShippingDate(LocalDate.now());
+        List<ItemGroup> itemGroups = new ArrayList<>();
+        itemGroups.add(oneGroup);
+        Order order = new Order(itemGroups, user.getId());
+        orderService.createItem(order);
+        ItemGroupDto itemGroupDto = itemMapper.mapItemGroupToItemGroupDto(oneGroup);
+        itemGroupDto.setAddress(user.getAddress());
+        List<ItemGroupDto> validList = List.of(itemGroupDto);
+        // When
+        List<ItemGroupDto> orderList = orderService.getGroupsShippedToday();
+
+        // Then
+        Assertions.assertThat(orderList).isEqualTo(validList);
     }
 }

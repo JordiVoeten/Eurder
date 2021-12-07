@@ -2,6 +2,7 @@ package com.switchfully.eurder.domain.Order;
 
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.Price;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 
@@ -28,6 +29,10 @@ public class ItemGroup {
         } else {
             this.shippingDate = shippingDate.plusDays(DELIVERY_TIME_ITEM_IN_STOCK);
         }
+    }
+
+    public void setShippingDate(LocalDate date) {
+        this.shippingDate = date;
     }
 
     public Item getItem() {

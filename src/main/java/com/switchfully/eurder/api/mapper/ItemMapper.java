@@ -43,6 +43,15 @@ public class ItemMapper {
         return new ItemGroup(item, itemGroupDto.getAmount());
     }
 
+    public ItemGroupDto mapItemGroupToItemGroupDto(ItemGroup itemGroup) {
+        ItemGroupDto itemGroupDto = new ItemGroupDto();
+        itemGroupDto.setItemId(itemGroup.getItem().getId());
+        itemGroupDto.setAmount(itemGroup.getAmount());
+        itemGroupDto.setShippingDate(itemGroup.getShippingDate());
+        itemGroupDto.setPrice(itemGroup.getGroupPrice());
+        return itemGroupDto;
+    }
+
     public Item mapUpdateItemDtoToExistingItem(UpdateItemDto updateItemDto, Item item) {
         if (updateItemDto.getName() != null) {
             item.setName(updateItemDto.getName());
