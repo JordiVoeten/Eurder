@@ -1,6 +1,7 @@
 package com.switchfully.eurder.repository;
 
 import com.switchfully.eurder.domain.user.User;
+import com.switchfully.eurder.domain.user.UserType;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class UserRepository {
 
     public UserRepository() {
         this.userList = new ArrayList<>();
+        userList.add(new User("admin", "adminLN", "admin@mail.com", "UNKNOWN", "UNKOWN").setUserType(UserType.ADMIN));
     }
 
     public List<User> getUserList() {

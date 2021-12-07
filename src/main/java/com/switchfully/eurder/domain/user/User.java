@@ -9,6 +9,7 @@ public class User {
     private final String email;
     private final String address;
     private final String phoneNumber;
+    private UserType userType;
 
     public User(String firstName, String lastName, String email, String address, String phoneNumber) {
         this.id = UUID.randomUUID().toString();
@@ -17,6 +18,16 @@ public class User {
         this.email = email;
         this.address = address;
         this.phoneNumber = phoneNumber;
+        this.userType = UserType.CUSTOMER;
+    }
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public User setUserType(UserType userType) {
+        this.userType = userType;
+        return this;
     }
 
     public String getId() {

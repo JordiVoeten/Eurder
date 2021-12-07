@@ -20,19 +20,21 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidUserException.class)
     protected void isbnDoesNotExist(InvalidUserException ex,
                                     HttpServletResponse response) throws IOException {
-        logger.error("Isbn does not exist" + ex.getMessage());
+        logger.error(ex.getMessage());
         response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
+
     @ExceptionHandler(InvalidItemException.class)
     protected void isbnDoesNotExist(InvalidItemException ex,
                                     HttpServletResponse response) throws IOException {
-        logger.error("Isbn does not exist" + ex.getMessage());
+        logger.error(ex.getMessage());
         response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
+
     @ExceptionHandler(InvalidOrderException.class)
     protected void isbnDoesNotExist(InvalidOrderException ex,
                                     HttpServletResponse response) throws IOException {
-        logger.error("Isbn does not exist" + ex.getMessage());
+        logger.error(ex.getMessage());
         response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 }

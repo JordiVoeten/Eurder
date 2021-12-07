@@ -6,6 +6,8 @@ import com.switchfully.eurder.domain.Order.Order;
 import com.switchfully.eurder.domain.Order.dto.OrderDto;
 import com.switchfully.eurder.domain.Order.dto.OrderListDto;
 import com.switchfully.eurder.domain.item.Price;
+import com.switchfully.eurder.security.Feature;
+import com.switchfully.eurder.security.UserValidator;
 import com.switchfully.eurder.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,16 +22,19 @@ public class OrderController {
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final OrderMapper orderMapper;
     private final OrderService orderService;
+    private final UserValidator userValidator;
 
-    public OrderController(OrderMapper orderMapper, OrderService orderService) {
+    public OrderController(OrderMapper orderMapper, OrderService orderService, UserValidator userValidator) {
         this.orderMapper = orderMapper;
         this.orderService = orderService;
+        this.userValidator = userValidator;
     }
 
     @PostMapping(produces = "application/json", consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public Price createOrder(@RequestBody CreateOrderDto createOrderDto) {
+    public Price createOrder(@RequestBody CreateOrderDto createOrderDto, @RequestHeader(required = false) String authorization) {
         logger.info("Method createOrder called");
+        userValidator.assertUserTypeForFeature(Feature.ORDER_ITEMS, authorization);
         Order newOrder = orderMapper.mapCreateOrderDtoToOrder(createOrderDto);
         Order savedOrder = orderService.createItem(newOrder);
         OrderDto orderDto = orderMapper.mapOrderToDto(savedOrder);
@@ -39,9 +44,9 @@ public class OrderController {
 
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public OrderListDto getOrderReport() {
+    public OrderListDto getOrderReport(@RequestHeader(required = false) String authorization) {
         logger.info("Method getOrderReport called");
-        List<Order> orderList = orderService.getOrders();
+        userValidator.assertUserTypeForFeature(Feature.VIEW_ORDER_REPORT, authorization);
         List<OrderDto> orderDtoList = orderService.getOrders().stream().map(orderMapper::mapOrderToDto).toList();
         OrderListDto orderListDto = orderMapper.mapOrderDtoListToOrderListDto(orderDtoList);
         logger.info("Method getOrderReport executed successfully");
