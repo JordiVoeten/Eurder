@@ -6,6 +6,7 @@ import com.switchfully.eurder.domain.item.StockLevel;
 import com.switchfully.eurder.domain.item.dto.CreateItemDto;
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.dto.ItemDto;
+import com.switchfully.eurder.domain.item.dto.UpdateItemDto;
 import com.switchfully.eurder.service.ItemService;
 import org.springframework.stereotype.Component;
 
@@ -40,5 +41,21 @@ public class ItemMapper {
     public ItemGroup mapItemGroupDtoToItemGroup(ItemGroupDto itemGroupDto) {
         Item item = itemService.getItemBy(itemGroupDto.getItemId());
         return new ItemGroup(item, itemGroupDto.getAmount());
+    }
+
+    public Item mapUpdateItemDtoToExistingItem(UpdateItemDto updateItemDto, Item item) {
+        if (updateItemDto.getName() != null) {
+            item.setName(updateItemDto.getName());
+        }
+        if (updateItemDto.getDescription() != null) {
+            item.setDescription(updateItemDto.getDescription());
+        }
+        if (updateItemDto.getAmount() > 0) {
+            item.setAmount(updateItemDto.getAmount());
+        }
+        if (updateItemDto.getPrice() != null) {
+            item.setPrice(updateItemDto.getPrice());
+        }
+        return item;
     }
 }

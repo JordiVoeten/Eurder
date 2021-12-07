@@ -3,6 +3,7 @@ package com.switchfully.eurder.service;
 import com.switchfully.eurder.domain.exceptions.InvalidItemException;
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.Price;
+import com.switchfully.eurder.domain.item.dto.UpdateItemDto;
 import com.switchfully.eurder.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 
@@ -71,4 +72,10 @@ public class ItemService {
             throw new InvalidItemException("The " + fieldName + " of the item is required.");
         }
     }
+
+    public Item updateItem(Item updatedItem) {
+        return itemRepository.updateItem(updatedItem);
+    }
+
+
 }

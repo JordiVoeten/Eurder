@@ -4,6 +4,7 @@ import com.switchfully.eurder.domain.exceptions.InvalidItemException;
 import com.switchfully.eurder.domain.item.Currency;
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.Price;
+import com.switchfully.eurder.domain.item.dto.UpdateItemDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,5 +168,40 @@ class ItemServiceTest {
 
         // Then
         Assertions.assertThat(found).isEqualTo(item);
+    }
+
+    @Test
+    void givenThreeItemsAddedToList_whenUpdateItemById_thenGetThatItem() {
+        // Given
+        Item item = new Item("Phone", "Used to call and text others", new Price(400, Currency.EUR), 5);
+        Item item2 = new Item("Bike", "Used to drive around", new Price(200, Currency.EUR), 2);
+        Item item3 = new Item("Pen", "Used to write something down", new Price(2, Currency.EUR), 10);
+        itemService.createItem(item);
+        itemService.createItem(item2);
+        itemService.createItem(item3);
+        item.setName("newPhone");
+        item.setDescription("newDescription");
+        item.setPrice(new Price(399, Currency.EUR));
+        item.setAmount(23);
+
+        // When
+        Item found = itemService.updateItem(item);
+
+        // Then
+        Assertions.assertThat(found.getName()).isEqualTo(item.getName());
+        Assertions.assertThat(found.getDescription()).isEqualTo(item.getDescription());
+        Assertions.assertThat(found.getAmount()).isEqualTo(item.getAmount());
+        Assertions.assertThat(found.getPrice()).isEqualTo(item.getPrice());
+    }
+
+    @Test
+    void givenEmptyList_whenUpdateItemByIdThatDoesNotExist_thenInvalidItemException() {
+        // Given
+        Item item = new Item("Phone", "Used to call and text others", new Price(400, Currency.EUR), 5);
+        // When
+        // Then
+        Assertions.assertThatThrownBy(() -> itemService.updateItem(item))
+                .isInstanceOf(InvalidItemException.class)
+                .hasMessage("The item with id: " + item.getId() + " does not exist.");
     }
 }

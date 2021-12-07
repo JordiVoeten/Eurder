@@ -5,6 +5,7 @@ import com.switchfully.eurder.domain.item.StockLevel;
 import com.switchfully.eurder.domain.item.dto.CreateItemDto;
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.dto.ItemDto;
+import com.switchfully.eurder.domain.item.dto.UpdateItemDto;
 import com.switchfully.eurder.security.Feature;
 import com.switchfully.eurder.security.UserValidator;
 import com.switchfully.eurder.service.ItemService;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.Path;
 import java.util.List;
 
 @RestController
@@ -38,6 +40,19 @@ public class ItemController {
         Item savedItem = itemService.createItem(newItem);
         ItemDto itemDto = itemMapper.mapItemToDto(savedItem);
         logger.info("Method createItem executed successfully");
+        return itemDto;
+    }
+
+    @PutMapping(path = "/{itemId}", produces = "application/json", consumes = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ItemDto updateItem(@PathVariable("itemId") String itemId, @RequestBody UpdateItemDto updateItemDto, @RequestHeader(required = false) String authorization) {
+        logger.info("Method updateItem called");
+        userValidator.assertUserTypeForFeature(Feature.UPDATE_ITEM, authorization);
+        Item item = itemService.getItemBy(itemId);
+        Item updated = itemMapper.mapUpdateItemDtoToExistingItem(updateItemDto, item);
+        updated = itemService.updateItem(updated);
+        ItemDto itemDto = itemMapper.mapItemToDto(updated);
+        logger.info("Method updateItem executed successfully");
         return itemDto;
     }
 

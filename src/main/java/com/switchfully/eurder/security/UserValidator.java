@@ -21,6 +21,7 @@ public class UserValidator {
 
         // Features for the item controller
         map.put(Feature.ADD_ITEM, UserType.ADMIN);
+        map.put(Feature.UPDATE_ITEM, UserType.ADMIN);
 
         // Features for the user controller
         map.put(Feature.VIEW_ALL_CUSTOMERS, UserType.ADMIN);
