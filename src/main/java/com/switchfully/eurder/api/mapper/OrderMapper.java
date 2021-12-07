@@ -24,16 +24,15 @@ public class OrderMapper {
         this.itemService = itemService;
     }
 
-    public Order mapCreateOrderDtoToOrder(CreateOrderDto createOrderDto) {
+    public Order mapCreateOrderDtoToOrder(CreateOrderDto createOrderDto, String customerId) {
         return new Order(itemMapper.mapItemGroupListDtoToItemGroupList(Arrays.stream(createOrderDto.getItemGroups()).toList())
-                , createOrderDto.getCustomerId());
+                , customerId);
     }
 
     public OrderDto mapOrderToDto(Order order) {
         return new OrderDto()
                 .setId(order.getId())
                 .setItemGroups(mapItemGroupToItemGroupReportDto(order))
-                .setCustomerId(order.getCustomerId())
                 .setTotalPrice(order.getTotalPrice());
     }
 

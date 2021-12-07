@@ -2,6 +2,7 @@ package com.switchfully.eurder.service;
 
 import com.switchfully.eurder.domain.user.User;
 import com.switchfully.eurder.domain.exceptions.InvalidUserException;
+import com.switchfully.eurder.domain.user.UserType;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,9 @@ class UserServiceTest {
     void givenAUserListWhichWeFill_whenGettingTheList_thenTheListShouldBeCorrectlyFilled() {
         // Given
         User user1 = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "01235");
-        User user2 = new User("Jordi2", "Voeten", "jordi@email.com", "Belgium", "01235");
-        User user3 = new User("Jordi3", "Voeten", "jordi@email.com", "Belgium", "01235");
-        List<User> validUserList = userService.getUsers();
+        User user2 = new User("Jordi2", "Voeten", "jordi2@email.com", "Belgium", "01235");
+        User user3 = new User("Jordi3", "Voeten", "jordi3@email.com", "Belgium", "01235");
+        List<User> validUserList = new ArrayList<>(userService.getUsers());
         validUserList.add(user1);
         validUserList.add(user2);
         validUserList.add(user3);
@@ -39,6 +40,23 @@ class UserServiceTest {
     }
 
     @Test
+    void givenAUsers_whenTryingToCreateUserWithSameEmail_thenInvalidUserException() {
+        // Given
+        User user1 = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "01235");
+        User user2 = new User("Jordi2", "Voeten", "jordi2@email.com", "Belgium", "01235");
+        User user3 = new User("Jordi3", "Voeten", "jordi@email.com", "Belgium", "01235");
+
+        userService.createUser(user1);
+        userService.createUser(user2);
+
+
+        // Then
+        Assertions.assertThatThrownBy(() -> userService.createUser(user3))
+                .isInstanceOf(InvalidUserException.class)
+                .hasMessage("The email address is already in use.");
+    }
+
+    @Test
     void givenAValidUser_whenAddingUserToRepository_thenUserIsSuccessfullyAdded() {
         // Given
         User user = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "01235");
@@ -49,6 +67,19 @@ class UserServiceTest {
 
         // Then
         Assertions.assertThat(userList).contains(user);
+    }
+
+    @Test
+    void givenAValidUser_whenAddingUserToRepository_thenUserIsCustomer() {
+        // Given
+        User user = new User("Jordi", "Voeten", "jordi@email.com", "Belgium", "01235");
+
+        // When
+        userService.createUser(user);
+        User createdUser = userService.getUserBy(user.getId());
+
+        // Then
+        Assertions.assertThat(createdUser.getUserType()).isEqualTo(UserType.CUSTOMER);
     }
 
     @Test

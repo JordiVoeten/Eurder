@@ -34,7 +34,7 @@ public class UserValidator {
     }
 
     public void assertUserTypeForFeature(Feature feature, String authorization) {
-        UserType userTypeToCheck = parseAuthorizationString(authorization).getUserType();
+        UserType userTypeToCheck = getUserFromAuthorization(authorization).getUserType();
         UserType minimumUserType = featureMap.get(feature);
         if (userTypeToCheck.getUserValue() < minimumUserType.getUserValue()) {
             throw new InvalidUserException("This user is not authorized to preform this action.");
@@ -45,14 +45,17 @@ public class UserValidator {
         this.userService = userService;
     }
 
-    private User parseAuthorizationString(String authorization) {
+    private String parseAuthorizationString(String authorization) {
         if (authorization == null) {
             throw new InvalidUserException("The username or password is incorrect.");
         }
         String parsed = new String(Base64.getDecoder().decode(authorization.substring(authorization.indexOf(" ") + 1)));
-        String email = parsed.substring(0, parsed.indexOf(":"));
+        return parsed.substring(0, parsed.indexOf(":"));
+    }
+
+    public User getUserFromAuthorization(String authorization) {
         return userService.getUsers().stream()
-                .filter(user -> user.getEmail().equals(email))
+                .filter(user -> user.getEmail().equals(parseAuthorizationString(authorization)))
                 .findFirst()
                 .orElseThrow(() -> new InvalidUserException("The username or password is incorrect."));
     }

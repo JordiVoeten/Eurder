@@ -8,7 +8,7 @@ public class Price {
     private Currency currency;
 
     public Price(double value, Currency currency) {
-        this.value = new BigDecimal(value).setScale(2, RoundingMode.HALF_EVEN);
+        this.value = new BigDecimal(value);
         this.currency = currency;
     }
 
@@ -22,7 +22,7 @@ public class Price {
     }
 
     public BigDecimal getValue() {
-        return value;
+        return value.setScale(2, RoundingMode.HALF_EVEN);
     }
 
     public Currency getCurrency() {

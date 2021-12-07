@@ -35,7 +35,8 @@ public class OrderController {
     public Price createOrder(@RequestBody CreateOrderDto createOrderDto, @RequestHeader(required = false) String authorization) {
         logger.info("Method createOrder called");
         userValidator.assertUserTypeForFeature(Feature.ORDER_ITEMS, authorization);
-        Order newOrder = orderMapper.mapCreateOrderDtoToOrder(createOrderDto);
+        String id = userValidator.getUserFromAuthorization(authorization).getId();
+        Order newOrder = orderMapper.mapCreateOrderDtoToOrder(createOrderDto, id);
         Order savedOrder = orderService.createItem(newOrder);
         OrderDto orderDto = orderMapper.mapOrderToDto(savedOrder);
         logger.info("Method createOrder executed successfully");
@@ -47,7 +48,10 @@ public class OrderController {
     public OrderListDto getOrderReport(@RequestHeader(required = false) String authorization) {
         logger.info("Method getOrderReport called");
         userValidator.assertUserTypeForFeature(Feature.VIEW_ORDER_REPORT, authorization);
-        List<OrderDto> orderDtoList = orderService.getOrders().stream().map(orderMapper::mapOrderToDto).toList();
+        String userId = userValidator.getUserFromAuthorization(authorization).getId();
+        List<OrderDto> orderDtoList = orderService.getOrdersByUser(userId).stream()
+                .map(orderMapper::mapOrderToDto)
+                .toList();
         OrderListDto orderListDto = orderMapper.mapOrderDtoListToOrderListDto(orderDtoList);
         logger.info("Method getOrderReport executed successfully");
         return orderListDto;

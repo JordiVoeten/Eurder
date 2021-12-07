@@ -7,7 +7,6 @@ import java.util.List;
 public class OrderDto {
     private String id;
     private List<ItemGroupReportDto> itemGroups;
-    private String customerId;
     private Price totalPrice;
 
     public String getId() {
@@ -25,15 +24,6 @@ public class OrderDto {
 
     public OrderDto setItemGroups(List<ItemGroupReportDto> itemGroups) {
         this.itemGroups = itemGroups;
-        return this;
-    }
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public OrderDto setCustomerId(String customerId) {
-        this.customerId = customerId;
         return this;
     }
 

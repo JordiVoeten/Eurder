@@ -57,4 +57,8 @@ public class OrderService {
     public List<Order> getOrders() {
         return orderRepository.getOrderList();
     }
+
+    public List<Order> getOrdersByUser(String customerId) {
+        return orderRepository.getOrderList().stream().filter(order -> order.getCustomerId().equals(customerId)).toList();
+    }
 }
