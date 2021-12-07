@@ -4,8 +4,8 @@ import com.switchfully.eurder.domain.exceptions.InvalidItemException;
 import com.switchfully.eurder.domain.item.Currency;
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.Price;
-import com.switchfully.eurder.domain.item.dto.UpdateItemDto;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,11 +21,22 @@ class ItemServiceTest {
     @Autowired
     private ItemService itemService;
 
+    Item item;
+    Item item2;
+    Item item3;
+
+    @BeforeEach
+    void setup() {
+        item = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
+        item2 = new Item("Bike", "Used to call and text others", new Price(22, Currency.EUR), 1);
+        item3 = new Item("Car", "Used to call and text others", new Price(22, Currency.EUR), 10);
+        itemService.createItem(item2);
+        itemService.createItem(item3);
+    }
+
     @Test
     void givenAValidItem_whenAddingThatItemToRepository_thenItemIsAdded() {
         // Given
-        Item item = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
-
         // When
         Item created = itemService.createItem(item);
 
@@ -36,12 +47,9 @@ class ItemServiceTest {
     @Test
     void givenAValidItem_whenSettingPriceAndAddingThatItemToRepository_thenItemIsAdded() {
         // Given
-        Item item = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
-
         // When
         item.getPrice().setValue(12);
         Item created = itemService.createItem(item);
-
         // Then
         Assertions.assertThat(item).isEqualTo(created);
     }
@@ -49,14 +57,8 @@ class ItemServiceTest {
     @Test
     void givenAValidItemList_whenGetItemsByUrgency_thenItemListIsSorted() {
         // Given
-        Item item = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
-        Item item2 = new Item("Bike", "Used to call and text others", new Price(22, Currency.EUR), 1);
-        Item item3 = new Item("Car", "Used to call and text others", new Price(22, Currency.EUR), 10);
-        List<Item> validSortedList = List.of(item2, item, item3);
         itemService.createItem(item);
-        itemService.createItem(item2);
-        itemService.createItem(item3);
-
+        List<Item> validSortedList = List.of(item2, item, item3);
         // When
         List<Item> urgencyList = itemService.getItemsByUrgency();
         // Then
@@ -66,8 +68,7 @@ class ItemServiceTest {
     @Test
     void givenAnItemWithInvalidName_whenAddingThatItemToRepository_thenThrowsInvalidItemException() {
         // Given
-        Item item = new Item(null, "Used to call and text others", new Price(22, Currency.EUR), 5);
-
+        item.setName(null);
         // When
         // Then
         Assertions.assertThatThrownBy(() -> itemService.createItem(item))
@@ -78,13 +79,11 @@ class ItemServiceTest {
     @Test
     void givenAnItemWithAnExistingName_whenAddingThatItemToRepository_thenThrowsInvalidItemException() {
         // Given
-        Item item = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
-        Item item2 = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
+        Item itemSameName = new Item("Phone", "Used to call and text others", new Price(22, Currency.EUR), 5);
         itemService.createItem(item);
-
         // When
         // Then
-        Assertions.assertThatThrownBy(() -> itemService.createItem(item2))
+        Assertions.assertThatThrownBy(() -> itemService.createItem(itemSameName))
                 .isInstanceOf(InvalidItemException.class)
                 .hasMessage("The item with name: Phone already exists.");
     }
@@ -92,8 +91,7 @@ class ItemServiceTest {
     @Test
     void givenAnItemWithInvalidDescription_whenAddingThatItemToRepository_thenThrowsInvalidItemException() {
         // Given
-        Item item = new Item("Phone", null, new Price(22, Currency.EUR), 5);
-
+        item.setDescription(null);
         // When
         // Then
         Assertions.assertThatThrownBy(() -> itemService.createItem(item))
@@ -104,8 +102,7 @@ class ItemServiceTest {
     @Test
     void givenAnItemWithInvalidPrice_whenAddingThatItemToRepository_thenThrowsInvalidItemException() {
         // Given
-        Item item = new Item("Phone", "Used to call and text others", null, 5);
-
+        item.setPrice(null);
         // When
         // Then
         Assertions.assertThatThrownBy(() -> itemService.createItem(item))
@@ -116,8 +113,7 @@ class ItemServiceTest {
     @Test
     void givenAnItemWithANegativePrice_whenAddingThatItemToRepository_thenThrowsInvalidItemException() {
         // Given
-        Item item = new Item("Phone", "Used to call and text others", new Price(-1, Currency.EUR), 5);
-
+        item.setPrice(new Price(-1, Currency.EUR));
         // When
         // Then
         Assertions.assertThatThrownBy(() -> itemService.createItem(item))
@@ -128,8 +124,7 @@ class ItemServiceTest {
     @Test
     void givenAnItemWithANegativeAmount_whenAddingThatItemToRepository_thenThrowsInvalidItemException() {
         // Given
-        Item item = new Item("Phone", "Used to call and text others", new Price(21, Currency.EUR), -5);
-
+        item.setAmount(-5);
         // When
         // Then
         Assertions.assertThatThrownBy(() -> itemService.createItem(item))
@@ -140,29 +135,20 @@ class ItemServiceTest {
     @Test
     void givenThreeItemsAddedToList_whenGetAllItems_thenListShouldMatch() {
         // Given
-        Item item = new Item("Phone", "Used to call and text others", new Price(400, Currency.EUR), 5);
-        Item item2 = new Item("Bike", "Used to drive around", new Price(200, Currency.EUR), 2);
-        Item item3 = new Item("Pen", "Used to write something down", new Price(2, Currency.EUR), 10);
         itemService.createItem(item);
-        itemService.createItem(item2);
-        itemService.createItem(item3);
         List<Item> validItemList = List.of(item, item2, item3);
         // When
         List<Item> itemList = itemService.getItems();
 
         // Then
-        Assertions.assertThat(itemList).isEqualTo(validItemList);
+        Assertions.assertThat(itemList).containsAll(validItemList);
     }
 
     @Test
     void givenThreeItemsAddedToList_whenGetItemById_thenGetThatItem() {
         // Given
-        Item item = new Item("Phone", "Used to call and text others", new Price(400, Currency.EUR), 5);
-        Item item2 = new Item("Bike", "Used to drive around", new Price(200, Currency.EUR), 2);
-        Item item3 = new Item("Pen", "Used to write something down", new Price(2, Currency.EUR), 10);
         itemService.createItem(item);
-        itemService.createItem(item2);
-        itemService.createItem(item3);
+
         // When
         Item found = itemService.getItemBy(item.getId());
 
@@ -173,12 +159,7 @@ class ItemServiceTest {
     @Test
     void givenThreeItemsAddedToList_whenUpdateItemById_thenGetThatItem() {
         // Given
-        Item item = new Item("Phone", "Used to call and text others", new Price(400, Currency.EUR), 5);
-        Item item2 = new Item("Bike", "Used to drive around", new Price(200, Currency.EUR), 2);
-        Item item3 = new Item("Pen", "Used to write something down", new Price(2, Currency.EUR), 10);
         itemService.createItem(item);
-        itemService.createItem(item2);
-        itemService.createItem(item3);
         item.setName("newPhone");
         item.setDescription("newDescription");
         item.setPrice(new Price(399, Currency.EUR));
@@ -197,11 +178,21 @@ class ItemServiceTest {
     @Test
     void givenEmptyList_whenUpdateItemByIdThatDoesNotExist_thenInvalidItemException() {
         // Given
-        Item item = new Item("Phone", "Used to call and text others", new Price(400, Currency.EUR), 5);
         // When
         // Then
         Assertions.assertThatThrownBy(() -> itemService.updateItem(item))
                 .isInstanceOf(InvalidItemException.class)
                 .hasMessage("The item with id: " + item.getId() + " does not exist.");
+    }
+
+    @Test
+    void givenAValidItem_whenChangingAmount_thenItemIsChanged() {
+        // Given
+        Item created = itemService.createItem(item);
+        // When
+        itemService.removeAmount(created, 2);
+        Item found = itemService.getItemBy(created.getId());
+        // Then
+        Assertions.assertThat(found.getAmount()).isEqualTo(3);
     }
 }
