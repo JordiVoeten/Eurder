@@ -3,6 +3,7 @@ package com.switchfully.eurder.api;
 import com.switchfully.eurder.domain.Order.Order;
 import com.switchfully.eurder.domain.Order.dto.CreateOrderDto;
 import com.switchfully.eurder.domain.Order.dto.ItemGroupDto;
+import com.switchfully.eurder.domain.Order.dto.OrderReportDto;
 import com.switchfully.eurder.domain.item.Currency;
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.Price;
@@ -28,7 +29,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.Base64;
+import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -175,9 +178,10 @@ class OrderControllerTest {
                     .extract()
                     .as(Price.class);
             Assertions.assertThat(order.getTotalPrice().getValue()).isNotEqualTo(price.getValue());
-            Assertions.assertThat(new Price(80,Currency.EUR).getValue()).isEqualTo(price.getValue());
-            Assertions.assertThat(new Price(80,Currency.EUR).getCurrency()).isEqualTo(price.getCurrency());
+            Assertions.assertThat(new Price(80, Currency.EUR).getValue()).isEqualTo(price.getValue());
+            Assertions.assertThat(new Price(80, Currency.EUR).getCurrency()).isEqualTo(price.getCurrency());
         }
+
         @Test
         void givenAValidOrder_WhenReorderingAsWrongUser_thenOrderIsCreated() {
             CreateUserDto createUserDto1 = getUser("Jordi", "Voeten", "jordi@mail.com", "Belgium", "number");
@@ -209,7 +213,58 @@ class OrderControllerTest {
                     .extract()
                     .path("message");
             Assertions.assertThat(message).isEqualTo("The order does not exist or the user is not the same.");
-         }
+        }
+    }
+
+    @Nested
+    @DisplayName("Get items that are shipped today tests")
+    class getItemsShippedToday {
+        @Test
+        void givenTwoItemGroupsOneLeavesToady_whenGettingItemsToday_thenGetOneItem() {
+            ItemDto itemDto = createItem();
+            ItemGroupDto itemGroupDto = new ItemGroupDto();
+            itemGroupDto.setItemId(itemDto.getId());
+            itemGroupDto.setAmount(2);
+
+            ItemGroupDto itemGroupDto2 = new ItemGroupDto();
+            itemGroupDto2.setItemId(itemDto.getId());
+            itemGroupDto2.setAmount(5);
+
+            CreateOrderDto createOrderDto = new CreateOrderDto();
+            createOrderDto.addItemToGroup(itemGroupDto);
+            createOrderDto.addItemToGroup(itemGroupDto2);
+
+            RestAssured
+                    .given()
+                    .body(createOrderDto)
+                    .header("authorization", admin)
+                    .accept(ContentType.JSON)
+                    .contentType(ContentType.JSON)
+                    .when()
+                    .port(port)
+                    .post("/orders");
+
+            Order order = orderService.getOrders().get(0);
+            order.getItemGroups().get(0).setShippingDate(LocalDate.now());
+
+            ItemGroupDto[] itemGroupDtoArray =
+                    RestAssured
+                            .given()
+                            .header("authorization", admin)
+                            .accept(ContentType.JSON)
+                            .contentType(ContentType.JSON)
+                            .when()
+                            .port(port)
+                            .get("/orders/shippedToday")
+                            .then()
+                            .assertThat()
+                            .statusCode(HttpStatus.OK.value())
+                            .extract()
+                            .as(ItemGroupDto[].class);
+            Assertions.assertThat(itemGroupDtoArray.length).isEqualTo(1);
+            Assertions.assertThat(itemGroupDtoArray[0].getItemId()).isEqualTo(itemGroupDto.getItemId());
+            Assertions.assertThat(itemGroupDtoArray[0].getAmount()).isEqualTo(itemGroupDto.getAmount());
+        }
     }
 
     public ItemDto createItem() {
@@ -260,6 +315,7 @@ class OrderControllerTest {
                 .setAddress(address)
                 .setPhoneNumber(phoneNumber);
     }
+
     private UserDto getUserDtoAfterAdding(CreateUserDto createUserDto1) {
         return RestAssured
                 .given()
