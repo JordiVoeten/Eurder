@@ -13,32 +13,36 @@ public class ItemGroupDto {
     private Price price;
     private String address;
 
-    public void setItemId(String itemId) {
+    public ItemGroupDto setItemId(String itemId) {
         this.itemId = itemId;
+        return this;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public ItemGroupDto setAddress(String address) {
         this.address = address;
+        return this;
     }
 
     public LocalDate getShippingDate() {
         return shippingDate;
     }
 
-    public void setShippingDate(LocalDate shippingDate) {
+    public ItemGroupDto setShippingDate(LocalDate shippingDate) {
         this.shippingDate = shippingDate;
+        return this;
     }
 
     public Price getPrice() {
         return price;
     }
 
-    public void setPrice(Price price) {
+    public ItemGroupDto setPrice(Price price) {
         this.price = price;
+        return this;
     }
 
     public String getItemId() {
@@ -49,8 +53,9 @@ public class ItemGroupDto {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public ItemGroupDto setAmount(int amount) {
         this.amount = amount;
+        return this;
     }
 
     @Override

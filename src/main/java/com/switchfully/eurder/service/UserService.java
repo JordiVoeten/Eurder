@@ -42,7 +42,7 @@ public class UserService {
 
     private void assertEmailNotInUse(String email) {
         if (userRepository.getUserList().stream().anyMatch(user -> user.getEmail().equals(email))) {
-             throw new InvalidUserException("The email address is already in use.");
+            throw new InvalidUserException("The email address is already in use.");
         }
     }
 
@@ -51,5 +51,4 @@ public class UserService {
             throw new InvalidUserException("The " + fieldName + " of the user is required.");
         }
     }
-
 }

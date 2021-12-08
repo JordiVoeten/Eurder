@@ -11,7 +11,6 @@ import com.switchfully.eurder.domain.item.Price;
 import com.switchfully.eurder.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,7 @@ public class OrderService {
 
     public Order createItem(Order order) {
         assertValidItemGroups(order.getItemGroups());
-        userService.getUserBy(order.getCustomerId());
+        userService.getUserBy(order.getCustomerId()); // throws exception in case the user does not exist
         order.setTotalPrice(calculateTotalOrderPrice(order));
         return orderRepository.addOrder(order);
     }
@@ -44,23 +43,18 @@ public class OrderService {
         if (itemGroups.stream().anyMatch(itemGroup -> itemGroup.getAmount() <= 0)) {
             throw new InvalidOrderException("The order can not have negative item amounts.");
         }
-
     }
 
     private Price calculateTotalOrderPrice(Order order) {
-        BigDecimal price = new BigDecimal(0);
+        double value = 0;
         Currency currency = null;
         for (ItemGroup itemGroup : order.getItemGroups()) {
             Item item = itemService.getItemBy(itemGroup.getItem().getId());
-            BigDecimal amount = new BigDecimal(itemGroup.getAmount());
-            price = price.add(item.getPrice().getValue().multiply(amount));
+            value += getItemGroupValue(itemGroup.getAmount(), item.getPrice());
             if (currency == null) currency = item.getPrice().getCurrency();
         }
-        for (ItemGroup itemGroup : order.getItemGroups()) {
-            Item item = itemService.getItemBy(itemGroup.getItem().getId());
-            itemService.removeAmount(item, itemGroup.getAmount());
-        }
-        return new Price(price.doubleValue(), currency);
+        order.getItemGroups().forEach(this::removeStockFromItemInGroup);
+        return new Price(value, currency);
     }
 
     public List<Order> getOrders() {
@@ -90,14 +84,19 @@ public class OrderService {
                 .filter(order -> order.getId().equals(orderId))
                 .findFirst()
                 .orElseThrow(() -> new InvalidOrderException("The order does not exist or the user is not the same."));
-
         List<ItemGroup> itemGroups = new ArrayList<>();
         for (ItemGroup itemGroup : foundOrder.getItemGroups()) {
-            Item item = itemService.getItemBy(itemGroup.getItem().getId());
-            int amount = itemGroup.getAmount();
-            itemGroups.add(new ItemGroup(item, amount));
+            itemGroups.add(new ItemGroup(itemService.getItemBy(itemGroup.getItem().getId()), itemGroup.getAmount()));
         }
-        Order newOrder = new Order(itemGroups, userId);
-        return createItem(newOrder);
+        return createItem(new Order(itemGroups, userId));
+    }
+
+    private double getItemGroupValue(int amount, Price price) {
+        return amount * price.getValue().doubleValue();
+    }
+
+    private void removeStockFromItemInGroup(ItemGroup itemGroup) {
+        Item item = itemService.getItemBy(itemGroup.getItem().getId());
+        itemService.removeAmountFromStock(item, itemGroup.getAmount());
     }
 }

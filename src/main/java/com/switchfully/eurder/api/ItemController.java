@@ -63,12 +63,8 @@ public class ItemController {
         List<Item> savedItem = itemService.getItemsByUrgency();
         List<ItemDto> itemDtoList = savedItem.stream()
                 .map(itemMapper::mapItemToDto)
+                .filter(itemDto -> stockLevel == null || itemDto.getStockLevel().equals(stockLevel))
                 .toList();
-        if (stockLevel != null) {
-            itemDtoList = itemDtoList.stream()
-                    .filter(itemDto -> itemDto.getStockLevel().equals(stockLevel))
-                    .toList();
-        }
         logger.info("Method getItemOverview executed successfully");
         return itemDtoList;
     }

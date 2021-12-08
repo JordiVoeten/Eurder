@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public class UserRepository {
-    private List<User> userList;
+    private final List<User> userList;
 
     public UserRepository() {
         this.userList = new ArrayList<>();

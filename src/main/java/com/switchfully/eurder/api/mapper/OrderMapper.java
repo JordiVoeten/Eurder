@@ -7,7 +7,6 @@ import com.switchfully.eurder.domain.Order.dto.OrderDto;
 import com.switchfully.eurder.domain.Order.dto.OrderReportDto;
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.Price;
-import com.switchfully.eurder.service.ItemService;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,11 +15,9 @@ import java.util.List;
 @Component
 public class OrderMapper {
     private final ItemMapper itemMapper;
-    private final ItemService itemService;
 
-    public OrderMapper(ItemMapper itemMapper, ItemService itemService) {
+    public OrderMapper(ItemMapper itemMapper) {
         this.itemMapper = itemMapper;
-        this.itemService = itemService;
     }
 
     public Order mapCreateOrderDtoToOrder(CreateOrderDto createOrderDto, String customerId) {
@@ -31,33 +28,30 @@ public class OrderMapper {
     public OrderDto mapOrderToDto(Order order) {
         return new OrderDto()
                 .setId(order.getId())
-                .setItemGroupReportDto(mapItemGroupToItemGroupReportDto(order))
+                .setItemGroupReportDto(mapItemGroupListToItemGroupReportDtoList(order))
                 .setValue(order.getTotalPrice().getValue())
                 .setCurrency(order.getTotalPrice().getCurrency());
     }
 
-    private List<ItemGroupReportDto> mapItemGroupToItemGroupReportDto(Order order) {
-        List<ItemGroupReportDto> itemGroupReportDtos = new ArrayList<>();
-        for (ItemGroup itemGroup : order.getItemGroups()) {
-            ItemGroupReportDto itemGroupReportDto = new ItemGroupReportDto();
-            Item item = itemGroup.getItem();
-            itemGroupReportDto.setItemName(item.getName());
-            itemGroupReportDto.setAmount(itemGroup.getAmount());
-            itemGroupReportDto.setItemGroupPrice(itemGroup.getGroupPrice());
-            itemGroupReportDtos.add(itemGroupReportDto);
-        }
-        return itemGroupReportDtos;
+    private List<ItemGroupReportDto> mapItemGroupListToItemGroupReportDtoList(Order order) {
+        return order.getItemGroups().stream()
+                .map(this::mapItemGroupToItemGroupReportDto)
+                .toList();
+    }
+
+    private ItemGroupReportDto mapItemGroupToItemGroupReportDto(ItemGroup itemGroup) {
+        return new ItemGroupReportDto()
+                .setItemName(itemGroup.getItem().getName())
+                .setAmount(itemGroup.getAmount())
+                .setItemGroupPrice(itemGroup.getGroupPrice());
     }
 
     public OrderReportDto mapOrderDtoListToOrderListDto(List<OrderDto> orderDtos) {
         OrderReportDto orderReportDto = new OrderReportDto();
         for (OrderDto orderDto : orderDtos) {
             orderReportDto.addToOrderList(orderDto);
-            Price current = orderReportDto.getTotalListPrice();
-            current.setValue(current.getValue().add(orderDto.getValue()).doubleValue());
-            orderReportDto.setTotalListPrice(current);
+            orderReportDto.setTotalListPrice(Price.add(orderReportDto.getTotalListPrice(), orderDto.getValue()));
         }
         return orderReportDto;
-
     }
 }

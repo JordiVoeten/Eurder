@@ -14,7 +14,7 @@ import java.util.List;
 
 @Component
 public class ItemMapper {
-    private ItemService itemService;
+    private final ItemService itemService;
 
     public ItemMapper(ItemService itemService) {
         this.itemService = itemService;
@@ -44,27 +44,18 @@ public class ItemMapper {
     }
 
     public ItemGroupDto mapItemGroupToItemGroupDto(ItemGroup itemGroup) {
-        ItemGroupDto itemGroupDto = new ItemGroupDto();
-        itemGroupDto.setItemId(itemGroup.getItem().getId());
-        itemGroupDto.setAmount(itemGroup.getAmount());
-        itemGroupDto.setShippingDate(itemGroup.getShippingDate());
-        itemGroupDto.setPrice(itemGroup.getGroupPrice());
-        return itemGroupDto;
+        return new ItemGroupDto()
+                .setItemId(itemGroup.getItem().getId())
+                .setAmount(itemGroup.getAmount())
+                .setShippingDate(itemGroup.getShippingDate())
+                .setPrice(itemGroup.getGroupPrice());
     }
 
     public Item mapUpdateItemDtoToExistingItem(UpdateItemDto updateItemDto, Item item) {
-        if (updateItemDto.getName() != null) {
-            item.setName(updateItemDto.getName());
-        }
-        if (updateItemDto.getDescription() != null) {
-            item.setDescription(updateItemDto.getDescription());
-        }
-        if (updateItemDto.getAmount() > 0) {
-            item.setAmount(updateItemDto.getAmount());
-        }
-        if (updateItemDto.getPrice() != null) {
-            item.setPrice(updateItemDto.getPrice());
-        }
+        if (updateItemDto.getName() != null) item.setName(updateItemDto.getName());
+        if (updateItemDto.getDescription() != null) item.setDescription(updateItemDto.getDescription());
+        if (updateItemDto.getAmount() > 0) item.setAmount(updateItemDto.getAmount());
+        if (updateItemDto.getPrice() != null) item.setPrice(updateItemDto.getPrice());
         return item;
     }
 }

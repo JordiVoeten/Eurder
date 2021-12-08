@@ -190,7 +190,7 @@ class ItemServiceTest {
         // Given
         Item created = itemService.createItem(item);
         // When
-        itemService.removeAmount(created, 2);
+        itemService.removeAmountFromStock(created, 2);
         Item found = itemService.getItemBy(created.getId());
         // Then
         Assertions.assertThat(found.getAmount()).isEqualTo(3);

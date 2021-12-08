@@ -28,7 +28,9 @@ public class ItemService {
     }
 
     public List<Item> getItemsByUrgency() {
-        return itemRepository.getItemList().stream().sorted(Comparator.comparingInt(Item::getAmount)).toList();
+        return itemRepository.getItemList().stream()
+                .sorted(Comparator.comparingInt(Item::getAmount))
+                .toList();
     }
 
     public Item getItemBy(String id) {
@@ -36,6 +38,21 @@ public class ItemService {
                 .filter(item -> item.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new InvalidItemException("Item with id: " + id + " does not exist."));
+    }
+
+    public Item updateItem(Item updatedItem) {
+        boolean nameTakenNotThisItem = itemRepository.getItemList().stream()
+                .filter(item -> item.getName().equals(updatedItem.getName()))
+                .anyMatch(item -> !item.getId().equals(updatedItem.getId()));
+        if (nameTakenNotThisItem) {
+            throw new InvalidItemException("The item with name: " + updatedItem.getName() + " already exists.");
+        }
+        return itemRepository.updateItem(updatedItem);
+    }
+
+    public void removeAmountFromStock(Item item, int amount) {
+        item.setAmount(item.getAmount() - amount);
+        updateItem(item);
     }
 
     private void validateItem(Item item) {
@@ -70,20 +87,5 @@ public class ItemService {
         if (value == null || value.trim().equals("")) {
             throw new InvalidItemException("The " + fieldName + " of the item is required.");
         }
-    }
-
-    public Item updateItem(Item updatedItem) {
-        boolean nameTakenNotThisItem = itemRepository.getItemList().stream()
-                .filter(item -> item.getName().equals(updatedItem.getName()))
-                .anyMatch(item -> !item.getId().equals(updatedItem.getId()));
-        if (nameTakenNotThisItem) {
-            throw new InvalidItemException("The item with name: " + updatedItem.getName() + " already exists.");
-        }
-        return itemRepository.updateItem(updatedItem);
-    }
-
-    public void removeAmount(Item item, int amount) {
-        item.setAmount(item.getAmount() - amount);
-        updateItem(item);
     }
 }

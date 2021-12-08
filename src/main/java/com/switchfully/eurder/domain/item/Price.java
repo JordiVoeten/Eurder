@@ -5,16 +5,20 @@ import java.math.RoundingMode;
 
 public class Price {
     private BigDecimal value;
-    private Currency currency;
+    private final Currency currency;
 
     public Price(double value, Currency currency) {
         this.value = new BigDecimal(value);
         this.currency = currency;
     }
 
-    public static Price calculatePrice(Price price, int amount) {
-        BigDecimal count = new BigDecimal(amount);
-        return new Price(count.multiply(price.getValue()).doubleValue(), price.getCurrency());
+    public static Price calculatePrice(Price price, double amount) {
+        BigDecimal convertedAmount = new BigDecimal(amount).multiply(price.getValue());
+        return new Price(convertedAmount.doubleValue(),price.getCurrency());
+    }
+
+    public static Price add(Price valueOne, BigDecimal valueTwo) {
+        return new Price(valueOne.getValue().add(valueTwo).doubleValue(), valueOne.getCurrency());
     }
 
     public void setValue(double value) {
