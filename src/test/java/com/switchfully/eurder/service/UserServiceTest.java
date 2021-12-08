@@ -1,7 +1,7 @@
 package com.switchfully.eurder.service;
 
-import com.switchfully.eurder.domain.user.User;
 import com.switchfully.eurder.domain.exceptions.InvalidUserException;
+import com.switchfully.eurder.domain.user.User;
 import com.switchfully.eurder.domain.user.UserType;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

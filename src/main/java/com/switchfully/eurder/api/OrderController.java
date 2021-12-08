@@ -1,9 +1,8 @@
 package com.switchfully.eurder.api;
 
 import com.switchfully.eurder.api.mapper.OrderMapper;
-import com.switchfully.eurder.domain.Order.ItemGroup;
-import com.switchfully.eurder.domain.Order.dto.CreateOrderDto;
 import com.switchfully.eurder.domain.Order.Order;
+import com.switchfully.eurder.domain.Order.dto.CreateOrderDto;
 import com.switchfully.eurder.domain.Order.dto.ItemGroupDto;
 import com.switchfully.eurder.domain.Order.dto.OrderDto;
 import com.switchfully.eurder.domain.Order.dto.OrderListDto;
@@ -16,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.PathParam;
 import java.util.List;
 
 @RestController

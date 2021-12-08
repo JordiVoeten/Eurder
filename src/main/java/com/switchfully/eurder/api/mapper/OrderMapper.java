@@ -11,7 +11,6 @@ import com.switchfully.eurder.service.ItemService;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -25,15 +24,16 @@ public class OrderMapper {
     }
 
     public Order mapCreateOrderDtoToOrder(CreateOrderDto createOrderDto, String customerId) {
-        return new Order(itemMapper.mapItemGroupListDtoToItemGroupList(Arrays.stream(createOrderDto.getItemGroups()).toList())
+        return new Order(itemMapper.mapItemGroupListDtoToItemGroupList(createOrderDto.getItemGroups())
                 , customerId);
     }
 
     public OrderDto mapOrderToDto(Order order) {
         return new OrderDto()
                 .setId(order.getId())
-                .setItemGroups(mapItemGroupToItemGroupReportDto(order))
-                .setTotalPrice(order.getTotalPrice());
+                .setItemGroupReportDto(mapItemGroupToItemGroupReportDto(order))
+                .setValue(order.getTotalPrice().getValue())
+                .setCurrency(order.getTotalPrice().getCurrency());
     }
 
     private List<ItemGroupReportDto> mapItemGroupToItemGroupReportDto(Order order) {
@@ -41,7 +41,6 @@ public class OrderMapper {
         for (ItemGroup itemGroup : order.getItemGroups()) {
             ItemGroupReportDto itemGroupReportDto = new ItemGroupReportDto();
             Item item = itemGroup.getItem();
-
             itemGroupReportDto.setItemName(item.getName());
             itemGroupReportDto.setAmount(itemGroup.getAmount());
             itemGroupReportDto.setItemGroupPrice(itemGroup.getGroupPrice());
