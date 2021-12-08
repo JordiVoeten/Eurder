@@ -4,7 +4,7 @@ import com.switchfully.eurder.domain.Order.*;
 import com.switchfully.eurder.domain.Order.dto.CreateOrderDto;
 import com.switchfully.eurder.domain.Order.dto.ItemGroupReportDto;
 import com.switchfully.eurder.domain.Order.dto.OrderDto;
-import com.switchfully.eurder.domain.Order.dto.OrderListDto;
+import com.switchfully.eurder.domain.Order.dto.OrderReportDto;
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.Price;
 import com.switchfully.eurder.service.ItemService;
@@ -49,15 +49,15 @@ public class OrderMapper {
         return itemGroupReportDtos;
     }
 
-    public OrderListDto mapOrderDtoListToOrderListDto(List<OrderDto> orderDtos) {
-        OrderListDto orderListDto = new OrderListDto();
+    public OrderReportDto mapOrderDtoListToOrderListDto(List<OrderDto> orderDtos) {
+        OrderReportDto orderReportDto = new OrderReportDto();
         for (OrderDto orderDto : orderDtos) {
-            orderListDto.addToOrderList(orderDto);
-            Price current = orderListDto.getTotalListPrice();
+            orderReportDto.addToOrderList(orderDto);
+            Price current = orderReportDto.getTotalListPrice();
             current.setValue(current.getValue().add(orderDto.getTotalPrice().getValue()).doubleValue());
-            orderListDto.setTotalListPrice(current);
+            orderReportDto.setTotalListPrice(current);
         }
-        return orderListDto;
+        return orderReportDto;
 
     }
 }

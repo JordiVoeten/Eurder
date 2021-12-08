@@ -41,7 +41,7 @@ public class OrderService {
         if (itemGroups == null || itemGroups.size() == 0) {
             throw new InvalidOrderException("The order needs items.");
         }
-        if (itemGroups.stream().anyMatch(itemGroup -> itemGroup.getAmount() < 0)) {
+        if (itemGroups.stream().anyMatch(itemGroup -> itemGroup.getAmount() <= 0)) {
             throw new InvalidOrderException("The order can not have negative item amounts.");
         }
 
@@ -55,6 +55,9 @@ public class OrderService {
             BigDecimal amount = new BigDecimal(itemGroup.getAmount());
             price = price.add(item.getPrice().getValue().multiply(amount));
             if (currency == null) currency = item.getPrice().getCurrency();
+        }
+        for (ItemGroup itemGroup : order.getItemGroups()) {
+            Item item = itemService.getItemBy(itemGroup.getItem().getId());
             itemService.removeAmount(item, itemGroup.getAmount());
         }
         return new Price(price.doubleValue(), currency);

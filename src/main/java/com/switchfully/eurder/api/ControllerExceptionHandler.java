@@ -18,21 +18,21 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     @ExceptionHandler(InvalidUserException.class)
-    protected void isbnDoesNotExist(InvalidUserException ex,
+    protected void invalidUserException(InvalidUserException ex,
                                     HttpServletResponse response) throws IOException {
         logger.error(ex.getMessage());
         response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 
     @ExceptionHandler(InvalidItemException.class)
-    protected void isbnDoesNotExist(InvalidItemException ex,
+    protected void invalidItemException(InvalidItemException ex,
                                     HttpServletResponse response) throws IOException {
         logger.error(ex.getMessage());
         response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 
     @ExceptionHandler(InvalidOrderException.class)
-    protected void isbnDoesNotExist(InvalidOrderException ex,
+    protected void invalidOrderException(InvalidOrderException ex,
                                     HttpServletResponse response) throws IOException {
         logger.error(ex.getMessage());
         response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());

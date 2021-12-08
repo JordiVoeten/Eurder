@@ -5,7 +5,7 @@ import com.switchfully.eurder.domain.Order.Order;
 import com.switchfully.eurder.domain.Order.dto.CreateOrderDto;
 import com.switchfully.eurder.domain.Order.dto.ItemGroupDto;
 import com.switchfully.eurder.domain.Order.dto.OrderDto;
-import com.switchfully.eurder.domain.Order.dto.OrderListDto;
+import com.switchfully.eurder.domain.Order.dto.OrderReportDto;
 import com.switchfully.eurder.domain.item.Price;
 import com.switchfully.eurder.security.Feature;
 import com.switchfully.eurder.security.UserValidator;
@@ -58,16 +58,16 @@ public class OrderController {
 
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public OrderListDto getOrderReport(@RequestHeader(required = false) String authorization) {
+    public OrderReportDto getOrderReport(@RequestHeader(required = false) String authorization) {
         logger.info("Method getOrderReport called");
         userValidator.assertUserTypeForFeature(Feature.VIEW_ORDER_REPORT, authorization);
         String userId = userValidator.getUserFromAuthorization(authorization).getId();
         List<OrderDto> orderDtoList = orderService.getOrdersByUser(userId).stream()
                 .map(orderMapper::mapOrderToDto)
                 .toList();
-        OrderListDto orderListDto = orderMapper.mapOrderDtoListToOrderListDto(orderDtoList);
+        OrderReportDto orderReportDto = orderMapper.mapOrderDtoListToOrderListDto(orderDtoList);
         logger.info("Method getOrderReport executed successfully");
-        return orderListDto;
+        return orderReportDto;
     }
 
     @GetMapping(path = "/shippedToday", produces = "application/json")
