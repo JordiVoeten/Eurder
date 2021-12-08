@@ -50,7 +50,7 @@ public class UserValidator {
     }
 
     private String parseAuthorizationString(String authorization) {
-        if (authorization == null) {
+        if (authorization == null || authorization.trim().equals("")) {
             throw new InvalidUserException("The username or password is incorrect.");
         }
         String parsed = new String(Base64.getDecoder().decode(authorization.substring(authorization.indexOf(" ") + 1)));
