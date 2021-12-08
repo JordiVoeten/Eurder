@@ -3,7 +3,6 @@ package com.switchfully.eurder.service;
 import com.switchfully.eurder.domain.exceptions.InvalidItemException;
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.Price;
-import com.switchfully.eurder.domain.item.dto.UpdateItemDto;
 import com.switchfully.eurder.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 
@@ -74,6 +73,12 @@ public class ItemService {
     }
 
     public Item updateItem(Item updatedItem) {
+        boolean nameTakenNotThisItem = itemRepository.getItemList().stream()
+                .filter(item -> item.getName().equals(updatedItem.getName()))
+                .anyMatch(item -> !item.getId().equals(updatedItem.getId()));
+        if (nameTakenNotThisItem) {
+            throw new InvalidItemException("The item with name: " + updatedItem.getName() + " already exists.");
+        }
         return itemRepository.updateItem(updatedItem);
     }
 

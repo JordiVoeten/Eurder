@@ -6,6 +6,7 @@ import com.switchfully.eurder.domain.item.Price;
 import com.switchfully.eurder.domain.item.StockLevel;
 import com.switchfully.eurder.domain.item.dto.CreateItemDto;
 import com.switchfully.eurder.domain.item.dto.ItemDto;
+import com.switchfully.eurder.domain.item.dto.UpdateItemDto;
 import com.switchfully.eurder.domain.user.dto.CreateUserDto;
 import com.switchfully.eurder.domain.user.dto.UserDto;
 import io.restassured.RestAssured;
@@ -41,7 +42,7 @@ class ItemControllerTest {
     }
 
     @Nested
-    @DisplayName("Creating an item test")
+    @DisplayName("Creating an item tests")
     class CreateItemTests {
         @Test
         void givenValidCreateItemDto_whenCreateItem_thenItemDtoGetsReturnedCorrectly() {
@@ -247,15 +248,14 @@ class ItemControllerTest {
     }
 
     @Nested
-    @DisplayName("Getter for item test")
-    class GetItemOverview {
+    @DisplayName("Getter for item tests")
+    class GetItemOverviewTests {
         @Test
         void givenTwoItems_whenGettingItemOverview_thenGetListInCorrectSequence() {
             // Given
             Price price = new Price(499, Currency.EUR);
             CreateItemDto createItemDto1 = getCreateItemDto("Phone", "To call others", 10, price);
             CreateItemDto createItemDto2 = getCreateItemDto("otherItem", "To call others", 2, price);
-
             ItemDto itemDto1 = CreateItem(createItemDto1);
             ItemDto itemDto2 = CreateItem(createItemDto2);
             List<ItemDto> valid = List.of(itemDto2, itemDto1);
@@ -277,6 +277,7 @@ class ItemControllerTest {
             Assertions.assertThat(valid.stream().map(ItemDto::getId).toList())
                     .containsAll(Arrays.stream(itemDto).map(ItemDto::getId).toList());
         }
+
         @Test
         void givenTwoItems_whenGettingItemOverviewUsingACustomer_thenGetListInCorrectSequence() {
             // Given
@@ -342,6 +343,100 @@ class ItemControllerTest {
         }
     }
 
+    @Nested
+    @DisplayName("Update item tests")
+    class UpdateItemTests {
+        @Test
+        void givenAnItem_whenUpdatingTheItem_thenGetCorrectItem() {
+            Price price = new Price(499, Currency.EUR);
+            CreateItemDto createItemDto = getCreateItemDto("Phone", "To call others", 10, price);
+            ItemDto itemDto = CreateItem(createItemDto);
+            UpdateItemDto updateItemDto = new UpdateItemDto()
+                    .setName("anotherPhone")
+                    .setDescription("differentDescription")
+                    .setAmount(1)
+                    .setPrice(new Price(200, Currency.EUR));
+
+            ItemDto found =
+                    RestAssured
+                            .given()
+                            .body(updateItemDto)
+                            .header("authorization", admin)
+                            .accept(ContentType.JSON)
+                            .contentType(ContentType.JSON)
+                            .when()
+                            .port(port)
+                            .put("/items/{itemId}", itemDto.getId())
+                            .then()
+                            .assertThat()
+                            .statusCode(HttpStatus.CREATED.value())
+                            .extract()
+                            .as(ItemDto.class);
+            Assertions.assertThat(found.getId()).isEqualTo(itemDto.getId());
+            Assertions.assertThat(found.getName()).isEqualTo(updateItemDto.getName());
+            Assertions.assertThat(found.getDescription()).isEqualTo(updateItemDto.getDescription());
+            Assertions.assertThat(found.getAmount()).isEqualTo(updateItemDto.getAmount());
+            Assertions.assertThat(found.getPrice().getValue()).isEqualTo(updateItemDto.getPrice().getValue());
+            Assertions.assertThat(found.getPrice().getCurrency()).isEqualTo(updateItemDto.getPrice().getCurrency());
+        }
+
+        @Test
+        void givenAnItem_whenUpdatingTheItemAsCustomer_thenGetCorrectErrorMessage() {
+            Price price = new Price(499, Currency.EUR);
+            CreateItemDto createItemDto = getCreateItemDto("Phone", "To call others", 10, price);
+            ItemDto itemDto = CreateItem(createItemDto);
+            UpdateItemDto updateItemDto = new UpdateItemDto().setName("anotherPhone");
+
+            CreateUserDto createUserDto = getUser("Jordi", "Voeten", "jordi@mail.com", "Belgium", "number");
+            UserDto userDto1 = getUserDtoAfterAdding(createUserDto);
+            String user = "Basic " + Base64.getEncoder().encodeToString((userDto1.getEmail() + ":").getBytes(StandardCharsets.UTF_8));
+
+            String message =
+                    RestAssured
+                            .given()
+                            .body(updateItemDto)
+                            .header("authorization", user)
+                            .accept(ContentType.JSON)
+                            .contentType(ContentType.JSON)
+                            .when()
+                            .port(port)
+                            .put("/items/{itemId}", itemDto.getId())
+                            .then()
+                            .assertThat()
+                            .statusCode(HttpStatus.BAD_REQUEST.value())
+                            .extract()
+                            .path("message");
+            Assertions.assertThat(message).isEqualTo("This user is not authorized to preform this action.");
+        }
+
+        @Test
+        void givenAnItem_whenUpdatingTheItemToAnAlreadyExistingName_thenGetCorrectErrorMessage() {
+            Price price = new Price(499, Currency.EUR);
+            CreateItemDto createItemDto = getCreateItemDto("Phone", "To call others", 10, price);
+            ItemDto itemDto = CreateItem(createItemDto);
+            CreateItemDto createItemDto2 = getCreateItemDto("anotherPhone", "To call others", 10, price);
+            ItemDto itemDto2 = CreateItem(createItemDto2);
+            UpdateItemDto updateItemDto = new UpdateItemDto().setName("anotherPhone");
+
+            String message =
+                    RestAssured
+                            .given()
+                            .body(updateItemDto)
+                            .header("authorization", admin)
+                            .accept(ContentType.JSON)
+                            .contentType(ContentType.JSON)
+                            .when()
+                            .port(port)
+                            .put("/items/{itemId}", itemDto.getId())
+                            .then()
+                            .assertThat()
+                            .statusCode(HttpStatus.BAD_REQUEST.value())
+                            .extract()
+                            .path("message");
+            Assertions.assertThat(message).isEqualTo("The item with name: " + updateItemDto.getName() + " already exists.");
+        }
+    }
+
     private ItemDto CreateItem(CreateItemDto createItemDto) {
         return RestAssured
                 .given()
@@ -364,6 +459,7 @@ class ItemControllerTest {
                 .setAmount(amount)
                 .setPrice(price);
     }
+
     private CreateUserDto getUser(String firstname, String lastname, String email, String address, String phoneNumber) {
         return new CreateUserDto()
                 .setFirstName(firstname)
@@ -372,6 +468,7 @@ class ItemControllerTest {
                 .setAddress(address)
                 .setPhoneNumber(phoneNumber);
     }
+
     private UserDto getUserDtoAfterAdding(CreateUserDto createUserDto1) {
         return RestAssured
                 .given()
