@@ -41,7 +41,7 @@ public class OrderController {
         Order savedOrder = orderService.createItem(newOrder);
         OrderDto orderDto = orderMapper.mapOrderToDto(savedOrder);
         logger.info("Method createOrder executed successfully");
-        return orderDto.getTotalPrice();
+        return new Price(orderDto.getValue().doubleValue(), orderDto.getCurrency());
     }
 
     @PostMapping(path = "/{orderId}", produces = "application/json", consumes = "application/json")
@@ -53,7 +53,7 @@ public class OrderController {
         Order reordered = orderService.reorderOrder(orderId, userId);
         OrderDto orderDto = orderMapper.mapOrderToDto(reordered);
         logger.info("Method reorderOrder executed successfully");
-        return orderDto.getTotalPrice();
+        return new Price(orderDto.getValue().doubleValue(), orderDto.getCurrency());
     }
 
     @GetMapping(produces = "application/json")

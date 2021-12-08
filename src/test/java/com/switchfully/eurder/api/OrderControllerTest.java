@@ -217,8 +217,38 @@ class OrderControllerTest {
     }
 
     @Nested
+    @DisplayName("Get order report tests")
+    class getOrderReportTest {
+        @Test
+        void givenOrder_whenGetOrderReport_thenGetCorrectOrderReport() {
+            ItemDto itemDto = createItem();
+            ItemGroupDto itemGroupDto = new ItemGroupDto();
+            itemGroupDto.setItemId(itemDto.getId());
+            itemGroupDto.setAmount(2);
+            CreateOrderDto createOrderDto = new CreateOrderDto();
+            createOrderDto.addItemToGroup(itemGroupDto);
+            createOrderThroughController(createOrderDto);
+
+            OrderReportDto orderReportDto =
+                    RestAssured
+                            .given()
+                            .header("authorization", admin)
+                            .accept(ContentType.JSON)
+                            .contentType(ContentType.JSON)
+                            .when()
+                            .port(port)
+                            .get("/orders")
+                            .then()
+                            .assertThat()
+                            .statusCode(HttpStatus.OK.value())
+                            .extract()
+                            .as(OrderReportDto.class);
+        }
+    }
+
+    @Nested
     @DisplayName("Get items that are shipped today tests")
-    class getItemsShippedToday {
+    class getItemsShippedTodayTest {
         @Test
         void givenTwoItemGroupsOneLeavesToady_whenGettingItemsToday_thenGetOneItem() {
             ItemDto itemDto = createItem();
@@ -234,15 +264,7 @@ class OrderControllerTest {
             createOrderDto.addItemToGroup(itemGroupDto);
             createOrderDto.addItemToGroup(itemGroupDto2);
 
-            RestAssured
-                    .given()
-                    .body(createOrderDto)
-                    .header("authorization", admin)
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .port(port)
-                    .post("/orders");
+            createOrderThroughController(createOrderDto);
 
             Order order = orderService.getOrders().get(0);
             order.getItemGroups().get(0).setShippingDate(LocalDate.now());
@@ -265,6 +287,18 @@ class OrderControllerTest {
             Assertions.assertThat(itemGroupDtoArray[0].getItemId()).isEqualTo(itemGroupDto.getItemId());
             Assertions.assertThat(itemGroupDtoArray[0].getAmount()).isEqualTo(itemGroupDto.getAmount());
         }
+    }
+
+    private void createOrderThroughController(CreateOrderDto createOrderDto) {
+        RestAssured
+                .given()
+                .body(createOrderDto)
+                .header("authorization", admin)
+                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
+                .when()
+                .port(port)
+                .post("/orders");
     }
 
     public ItemDto createItem() {

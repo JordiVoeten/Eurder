@@ -60,9 +60,4 @@ public class ItemGroupDto {
         ItemGroupDto that = (ItemGroupDto) o;
         return amount == that.amount && Objects.equals(itemId, that.itemId) && Objects.equals(shippingDate, that.shippingDate) && Objects.equals(price, that.price) && Objects.equals(address, that.address);
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(itemId, amount, shippingDate, price, address);
-    }
 }

@@ -32,9 +32,9 @@ public class OrderDto {
         return this;
     }
 
-    public Price getTotalPrice() {
-        return new Price(value.doubleValue(), currency);
-    }
+//    public Price getTotalPrice() {
+//        return new Price(value.doubleValue(), currency);
+//    }
 
     public BigDecimal getValue() {
         return value;
