@@ -1,6 +1,5 @@
 package com.switchfully.eurder.api;
 
-import com.switchfully.eurder.domain.user.User;
 import com.switchfully.eurder.domain.user.dto.CreateUserDto;
 import com.switchfully.eurder.domain.user.dto.UserDto;
 import io.restassured.RestAssured;
@@ -18,7 +17,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
