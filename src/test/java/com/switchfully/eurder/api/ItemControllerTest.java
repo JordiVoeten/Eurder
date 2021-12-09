@@ -351,11 +351,12 @@ class ItemControllerTest {
             Price price = new Price(499, Currency.EUR);
             CreateItemDto createItemDto = getCreateItemDto("Phone", "To call others", 10, price);
             ItemDto itemDto = CreateItem(createItemDto);
-            UpdateItemDto updateItemDto = new UpdateItemDto()
-                    .setName("anotherPhone")
-                    .setDescription("differentDescription")
-                    .setAmount(1)
-                    .setPrice(new Price(200, Currency.EUR));
+            UpdateItemDto updateItemDto = UpdateItemDto.builder()
+                    .name("anotherPhone")
+                    .description("differentDescription")
+                    .amount(1)
+                    .price(new Price(200, Currency.EUR))
+                    .build();
 
             ItemDto found =
                     RestAssured
@@ -385,7 +386,7 @@ class ItemControllerTest {
             Price price = new Price(499, Currency.EUR);
             CreateItemDto createItemDto = getCreateItemDto("Phone", "To call others", 10, price);
             ItemDto itemDto = CreateItem(createItemDto);
-            UpdateItemDto updateItemDto = new UpdateItemDto().setName("anotherPhone");
+            UpdateItemDto updateItemDto = UpdateItemDto.builder().name("anotherPhone").build();
 
             CreateUserDto createUserDto = getUser("Jordi", "Voeten", "jordi@mail.com", "Belgium", "number");
             UserDto userDto1 = getUserDtoAfterAdding(createUserDto);
@@ -416,7 +417,7 @@ class ItemControllerTest {
             ItemDto itemDto = CreateItem(createItemDto);
             CreateItemDto createItemDto2 = getCreateItemDto("anotherPhone", "To call others", 10, price);
             ItemDto itemDto2 = CreateItem(createItemDto2);
-            UpdateItemDto updateItemDto = new UpdateItemDto().setName("anotherPhone");
+            UpdateItemDto updateItemDto = UpdateItemDto.builder().name("anotherPhone").build();
 
             String message =
                     RestAssured
@@ -437,6 +438,7 @@ class ItemControllerTest {
         }
     }
 
+
     private ItemDto CreateItem(CreateItemDto createItemDto) {
         return RestAssured
                 .given()
@@ -453,20 +455,21 @@ class ItemControllerTest {
     }
 
     private CreateItemDto getCreateItemDto(String name, String description, int amount, Price price) {
-        return new CreateItemDto()
-                .setName(name)
-                .setDescription(description)
-                .setAmount(amount)
-                .setPrice(price);
+        return CreateItemDto.builder()
+                .name(name)
+                .description(description)
+                .amount(amount)
+                .price(price).build();
     }
 
     private CreateUserDto getUser(String firstname, String lastname, String email, String address, String phoneNumber) {
-        return new CreateUserDto()
-                .setFirstName(firstname)
-                .setLastName(lastname)
-                .setEmail(email)
-                .setAddress(address)
-                .setPhoneNumber(phoneNumber);
+        return CreateUserDto.builder()
+                .firstName(firstname)
+                .lastName(lastname)
+                .email(email)
+                .address(address)
+                .phoneNumber(phoneNumber)
+                .build();
     }
 
     private UserDto getUserDtoAfterAdding(CreateUserDto createUserDto1) {

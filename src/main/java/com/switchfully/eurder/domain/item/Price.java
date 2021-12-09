@@ -5,7 +5,10 @@ import java.math.RoundingMode;
 
 public class Price {
     private BigDecimal value;
-    private final Currency currency;
+    private Currency currency;
+
+    public Price() {
+    }
 
     public Price(double value, Currency currency) {
         this.value = new BigDecimal(value);
@@ -14,7 +17,7 @@ public class Price {
 
     public static Price calculatePrice(Price price, double amount) {
         BigDecimal convertedAmount = new BigDecimal(amount).multiply(price.getValue());
-        return new Price(convertedAmount.doubleValue(),price.getCurrency());
+        return new Price(convertedAmount.doubleValue(), price.getCurrency());
     }
 
     public static Price add(Price valueOne, BigDecimal valueTwo) {
@@ -32,4 +35,13 @@ public class Price {
     public Currency getCurrency() {
         return currency;
     }
+
+    public void setValue(BigDecimal value) {
+        this.value = value;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
 }

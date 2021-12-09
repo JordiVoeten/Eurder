@@ -2,7 +2,6 @@ package com.switchfully.eurder.domain.Order;
 
 import com.switchfully.eurder.domain.item.Item;
 import com.switchfully.eurder.domain.item.Price;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 

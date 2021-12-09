@@ -1,42 +1,24 @@
 package com.switchfully.eurder.domain.Order.dto;
 
-import com.switchfully.eurder.domain.item.Currency;
-import com.switchfully.eurder.domain.item.Price;
+ import com.switchfully.eurder.domain.item.Price;
+ import lombok.Builder;
+ import lombok.Getter;
+ import lombok.Setter;
 
+@Getter
+@Setter
+@Builder
 public class ItemGroupReportDto {
     private String itemName;
     private int amount;
-    private Price itemGroupPrice;
+    private Price price;
 
     public ItemGroupReportDto() {
-        this.itemGroupPrice = new Price(0, Currency.EUR);
     }
 
-    public String getItemName() {
-        return itemName;
-    }
-
-    public ItemGroupReportDto setItemName(String itemName) {
+    public ItemGroupReportDto(String itemName, int amount, Price price) {
         this.itemName = itemName;
-        return this;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public ItemGroupReportDto setAmount(int amount) {
         this.amount = amount;
-        return this;
+        this.price = price;
     }
-
-    public Price getItemGroupPrice() {
-        return itemGroupPrice;
-    }
-
-    public ItemGroupReportDto setItemGroupPrice(Price itemGroupPrice) {
-        this.itemGroupPrice = itemGroupPrice;
-        return this;
-    }
-
 }

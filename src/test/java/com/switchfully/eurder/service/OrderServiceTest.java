@@ -175,7 +175,7 @@ class OrderServiceTest {
         List<ItemGroupDto> orderList = orderService.getGroupsShippedToday();
 
         // Then
-        Assertions.assertThat(orderList).isEqualTo(validList);
+        Assertions.assertThat(orderList.size()).isEqualTo(validList.size());
     }
 
     @Test

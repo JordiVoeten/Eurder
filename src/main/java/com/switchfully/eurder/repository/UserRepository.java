@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public class UserRepository {
@@ -13,7 +14,17 @@ public class UserRepository {
 
     public UserRepository() {
         this.userList = new ArrayList<>();
-        userList.add(new User("admin", "adminLN", "admin@hotmail.com", "UNKNOWN", "UNKOWN").setUserType(UserType.ADMIN));
+
+        User admin = User.builder()
+                .id(UUID.randomUUID().toString())
+                .firstName("admin")
+                .lastName("adminLN")
+                .email("admin@hotmail.com")
+                .address("unknown")
+                .phoneNumber("unknown")
+                .userType(UserType.ADMIN)
+                .build();
+         userList.add(admin);
     }
 
     public List<User> getUserList() {

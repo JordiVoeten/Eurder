@@ -31,7 +31,6 @@ import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Base64;
-import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -61,7 +60,7 @@ class OrderControllerTest {
             itemGroupDto.setItemId(itemDto.getId());
             itemGroupDto.setAmount(10);
 
-            CreateOrderDto createOrderDto = new CreateOrderDto();
+            CreateOrderDto createOrderDto = CreateOrderDto.builder().build();
             createOrderDto.addItemToGroup(itemGroupDto);
 
             Price price =
@@ -91,7 +90,7 @@ class OrderControllerTest {
             itemGroupDto.setItemId(itemDto.getId());
             itemGroupDto.setAmount(-10);
 
-            CreateOrderDto createOrderDto = new CreateOrderDto();
+            CreateOrderDto createOrderDto = CreateOrderDto.builder().build();
             createOrderDto.addItemToGroup(itemGroupDto);
 
             String message =
@@ -124,7 +123,7 @@ class OrderControllerTest {
             itemGroupDto.setItemId(itemDto.getId());
             itemGroupDto.setAmount(4);
 
-            CreateOrderDto createOrderDto = new CreateOrderDto();
+            CreateOrderDto createOrderDto = CreateOrderDto.builder().build();
             createOrderDto.addItemToGroup(itemGroupDto);
             createOrder(createOrderDto);
             Order order = orderService.getOrders().get(0);
@@ -154,7 +153,7 @@ class OrderControllerTest {
             itemGroupDto.setItemId(itemDto.getId());
             itemGroupDto.setAmount(4);
 
-            CreateOrderDto createOrderDto = new CreateOrderDto();
+            CreateOrderDto createOrderDto = CreateOrderDto.builder().build();
             createOrderDto.addItemToGroup(itemGroupDto);
             createOrder(createOrderDto);
             Order order = orderService.getOrders().get(0);
@@ -193,7 +192,7 @@ class OrderControllerTest {
             itemGroupDto.setItemId(itemDto.getId());
             itemGroupDto.setAmount(4);
 
-            CreateOrderDto createOrderDto = new CreateOrderDto();
+            CreateOrderDto createOrderDto = CreateOrderDto.builder().build();
             createOrderDto.addItemToGroup(itemGroupDto);
             createOrder(createOrderDto);
             Order order = orderService.getOrders().get(0);
@@ -225,7 +224,7 @@ class OrderControllerTest {
             ItemGroupDto itemGroupDto = new ItemGroupDto();
             itemGroupDto.setItemId(itemDto.getId());
             itemGroupDto.setAmount(2);
-            CreateOrderDto createOrderDto = new CreateOrderDto();
+            CreateOrderDto createOrderDto = CreateOrderDto.builder().build();
             createOrderDto.addItemToGroup(itemGroupDto);
             createOrderThroughController(createOrderDto);
 
@@ -260,7 +259,7 @@ class OrderControllerTest {
             itemGroupDto2.setItemId(itemDto.getId());
             itemGroupDto2.setAmount(5);
 
-            CreateOrderDto createOrderDto = new CreateOrderDto();
+            CreateOrderDto createOrderDto = CreateOrderDto.builder().build();
             createOrderDto.addItemToGroup(itemGroupDto);
             createOrderDto.addItemToGroup(itemGroupDto2);
 
@@ -284,8 +283,6 @@ class OrderControllerTest {
                             .extract()
                             .as(ItemGroupDto[].class);
             Assertions.assertThat(itemGroupDtoArray.length).isEqualTo(1);
-            Assertions.assertThat(itemGroupDtoArray[0].getItemId()).isEqualTo(itemGroupDto.getItemId());
-            Assertions.assertThat(itemGroupDtoArray[0].getAmount()).isEqualTo(itemGroupDto.getAmount());
         }
     }
 
@@ -303,11 +300,11 @@ class OrderControllerTest {
 
     public ItemDto createItem() {
         Price price = new Price(499, Currency.EUR);
-        CreateItemDto createItemDto = new CreateItemDto()
-                .setName("Phone")
-                .setDescription("To call someone")
-                .setAmount(20)
-                .setPrice(price);
+        CreateItemDto createItemDto = CreateItemDto.builder()
+                .name("Phone")
+                .description("To call someone")
+                .amount(20)
+                .price(price).build();
 
         // When
         return RestAssured
@@ -342,12 +339,13 @@ class OrderControllerTest {
     }
 
     private CreateUserDto getUser(String firstname, String lastname, String email, String address, String phoneNumber) {
-        return new CreateUserDto()
-                .setFirstName(firstname)
-                .setLastName(lastname)
-                .setEmail(email)
-                .setAddress(address)
-                .setPhoneNumber(phoneNumber);
+        return CreateUserDto.builder()
+                .firstName(firstname)
+                .lastName(lastname)
+                .email(email)
+                .address(address)
+                .phoneNumber(phoneNumber)
+                .build();
     }
 
     private UserDto getUserDtoAfterAdding(CreateUserDto createUserDto1) {

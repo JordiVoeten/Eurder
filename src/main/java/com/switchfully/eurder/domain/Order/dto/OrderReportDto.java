@@ -6,6 +6,13 @@ import com.switchfully.eurder.domain.item.Price;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Builder
 public class OrderReportDto {
     private List<OrderDto> orderList;
     private Price totalListPrice;
@@ -15,26 +22,13 @@ public class OrderReportDto {
         this.totalListPrice = new Price(0, Currency.EUR);
     }
 
-    public List<OrderDto> getOrderList() {
-        return orderList;
-    }
-
-    public OrderReportDto setOrderList(List<OrderDto> orderList) {
+    public OrderReportDto(List<OrderDto> orderList, Price totalListPrice) {
         this.orderList = orderList;
-        return this;
+        this.totalListPrice = totalListPrice;
     }
 
     public OrderReportDto addToOrderList(OrderDto orderDto) {
         this.orderList.add(orderDto);
-        return this;
-    }
-
-    public Price getTotalListPrice() {
-        return totalListPrice;
-    }
-
-    public OrderReportDto setTotalListPrice(Price totalListPrice) {
-        this.totalListPrice = totalListPrice;
         return this;
     }
 }

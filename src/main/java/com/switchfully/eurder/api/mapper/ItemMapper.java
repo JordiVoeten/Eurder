@@ -25,13 +25,14 @@ public class ItemMapper {
     }
 
     public ItemDto mapItemToDto(Item item) {
-        return new ItemDto()
-                .setId(item.getId())
-                .setStockLevel(StockLevel.getStockLevelForAmount(item.getAmount()))
-                .setName(item.getName())
-                .setDescription(item.getDescription())
-                .setPrice(item.getPrice())
-                .setAmount(item.getAmount());
+        return ItemDto.builder()
+                .id(item.getId())
+                .stockLevel(StockLevel.getStockLevelForAmount(item.getAmount()))
+                .name(item.getName())
+                .description(item.getDescription())
+                .price(item.getPrice())
+                .amount(item.getAmount())
+                .build();
     }
 
     public List<ItemGroup> mapItemGroupListDtoToItemGroupList(List<ItemGroupDto> itemGroups) {
@@ -44,11 +45,12 @@ public class ItemMapper {
     }
 
     public ItemGroupDto mapItemGroupToItemGroupDto(ItemGroup itemGroup) {
-        return new ItemGroupDto()
-                .setItemId(itemGroup.getItem().getId())
-                .setAmount(itemGroup.getAmount())
-                .setShippingDate(itemGroup.getShippingDate())
-                .setPrice(itemGroup.getGroupPrice());
+        return ItemGroupDto.builder()
+                .itemId(itemGroup.getItem().getId())
+                .amount(itemGroup.getAmount())
+                .shippingDate(itemGroup.getShippingDate())
+                .price(itemGroup.getGroupPrice())
+                .build();
     }
 
     public Item mapUpdateItemDtoToExistingItem(UpdateItemDto updateItemDto, Item item) {

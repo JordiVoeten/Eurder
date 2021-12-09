@@ -26,11 +26,10 @@ public class OrderMapper {
     }
 
     public OrderDto mapOrderToDto(Order order) {
-        return new OrderDto()
-                .setId(order.getId())
-                .setItemGroupReportDto(mapItemGroupListToItemGroupReportDtoList(order))
-                .setValue(order.getTotalPrice().getValue())
-                .setCurrency(order.getTotalPrice().getCurrency());
+        return OrderDto.builder()
+                .id(order.getId())
+                .itemGroupReportDto(mapItemGroupListToItemGroupReportDtoList(order))
+                .price(order.getTotalPrice()).build();
     }
 
     private List<ItemGroupReportDto> mapItemGroupListToItemGroupReportDtoList(Order order) {
@@ -40,17 +39,18 @@ public class OrderMapper {
     }
 
     private ItemGroupReportDto mapItemGroupToItemGroupReportDto(ItemGroup itemGroup) {
-        return new ItemGroupReportDto()
-                .setItemName(itemGroup.getItem().getName())
-                .setAmount(itemGroup.getAmount())
-                .setItemGroupPrice(itemGroup.getGroupPrice());
+        return ItemGroupReportDto.builder()
+                .itemName(itemGroup.getItem().getName())
+                .amount(itemGroup.getAmount())
+                .price(itemGroup.getGroupPrice())
+                .build();
     }
 
     public OrderReportDto mapOrderDtoListToOrderListDto(List<OrderDto> orderDtos) {
         OrderReportDto orderReportDto = new OrderReportDto();
         for (OrderDto orderDto : orderDtos) {
             orderReportDto.addToOrderList(orderDto);
-            orderReportDto.setTotalListPrice(Price.add(orderReportDto.getTotalListPrice(), orderDto.getValue()));
+            orderReportDto.setTotalListPrice(Price.add(orderReportDto.getTotalListPrice(), orderDto.getPrice().getValue()));
         }
         return orderReportDto;
     }

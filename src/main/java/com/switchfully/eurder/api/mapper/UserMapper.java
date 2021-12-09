@@ -17,12 +17,13 @@ public class UserMapper {
     }
 
     public UserDto mapUserToDto(User user) {
-        return new UserDto()
-                .setId(user.getId())
-                .setFirstName(user.getFirstName())
-                .setLastName(user.getLastName())
-                .setEmail(user.getEmail())
-                .setAddress(user.getAddress())
-                .setPhoneNumber(user.getPhoneNumber());
+        return UserDto.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .address(user.getAddress())
+                .phoneNumber(user.getPhoneNumber())
+                .build();
     }
 }

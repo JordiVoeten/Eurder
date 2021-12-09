@@ -390,11 +390,12 @@ class UserControllerTest {
 
 
     private CreateUserDto getUser(String firstname, String lastname, String email, String address, String phoneNumber) {
-        return new CreateUserDto()
-                .setFirstName(firstname)
-                .setLastName(lastname)
-                .setEmail(email)
-                .setAddress(address)
-                .setPhoneNumber(phoneNumber);
+        return CreateUserDto.builder()
+                .firstName(firstname)
+                .lastName(lastname)
+                .email(email)
+                .address(address)
+                .phoneNumber(phoneNumber)
+                .build();
     }
 }

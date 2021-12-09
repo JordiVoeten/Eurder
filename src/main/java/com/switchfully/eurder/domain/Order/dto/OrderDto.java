@@ -7,50 +7,24 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Builder
 public class OrderDto {
     private String id;
     private List<ItemGroupReportDto> itemGroupReportDto;
-    private BigDecimal value;
-    private Currency currency;
+    private Price price;
 
-    public String getId() {
-        return id;
+    public OrderDto() {
     }
 
-    public OrderDto setId(String id) {
+    public OrderDto(String id, List<ItemGroupReportDto> itemGroupReportDto, Price price) {
         this.id = id;
-        return this;
-    }
-
-    public List<ItemGroupReportDto> getItemGroupReportDto() {
-        return itemGroupReportDto;
-    }
-
-    public OrderDto setItemGroupReportDto(List<ItemGroupReportDto> itemGroupReportDto) {
-        if (itemGroupReportDto == null) itemGroupReportDto = new ArrayList<>();
         this.itemGroupReportDto = itemGroupReportDto;
-        return this;
-    }
-
-//    public Price getTotalPrice() {
-//        return new Price(value.doubleValue(), currency);
-//    }
-
-    public BigDecimal getValue() {
-        return value;
-    }
-
-    public OrderDto setValue(BigDecimal value) {
-        this.value = value;
-        return this;
-    }
-
-    public Currency getCurrency() {
-        return currency;
-    }
-
-    public OrderDto setCurrency(Currency currency) {
-        this.currency = currency;
-        return this;
+        this.price = price;
     }
 }
