@@ -8,6 +8,7 @@ import com.switchfully.eurder.repository.ItemRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,11 +43,11 @@ class ItemControllerEndToEndTest {
                 .amount(10)
                 .price(new Price(499.99, Currency.EUR)).build();
 
-        // When
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBasicAuth("admin@hotmail.com", "");
         HttpEntity<CreateItemDto> requestEntity = new HttpEntity<>(createItemDto, headers);
+        // When
 
         ResponseEntity<ItemDto> entity = restTemplate.postForEntity(URI, requestEntity, ItemDto.class);
 
